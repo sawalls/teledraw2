@@ -1,0 +1,30 @@
+{
+  "name": "teledraw2",
+  "version": "1.0.0",
+  "description": "A webapp for playing teledraw",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sawalls/teledraw2.git"
+  },
+  "author": "Scott Walls and Kevin Kozlowski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sawalls/teledraw2/issues"
+  },
+  "homepage": "https://github.com/sawalls/teledraw2#readme",
+  "dependencies" : {
+      "express" : "latest",
+      "jade" : "latest",
+      "morgan" : "latest",
+      "compression" : "latest",
+      "express-session" : "latest",
+      "session-file-store" : "latest",
+      "socket.io" : "latest",
+      "mongoose" : "latest"
+  }
+}
