@@ -1,0 +1,8 @@
+script(src="createAcct.js")
+div(ng-controller="createAcctController")
+    p Create Account
+    | Username: #[input(type="text", ng-model="createAcctUsername")] #[br]
+    | Password: #[input(type="password", ng-model="createAcctPassword")] #[br]
+    | Email: #[input(type="text", ng-model="createAcctEmail")] #[br]
+    p(ng-show="showError") {{createAcctErrorMsg}}
+    button(ng-click="createAcctBtnClickedHandler()") Create Account

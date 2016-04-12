@@ -1,0 +1,9 @@
+script(src="login.js")
+div(ng-controller="loginController")
+    | Username: #[input(type="text", ng-model="username")] #[br]
+    | Password: #[input(type="password", ng-model="password")] #[br]
+    button(ng-click="loginBtnClickedHandler()") Login
+    br
+    p(ng-show="showError") {{loginErrorMsg}}
+    | New here? #[button(ng-click="createAcctBtnClickedHandler()") Create Account!]
+
