@@ -9,6 +9,7 @@ var UserSchema = new Schema({
     usernameLower : String,
     uuid : String,
     email : String,
+    emailLower : String,
     createDate : Date,
 });
 
@@ -23,7 +24,8 @@ exports.addUser = function(args, callback)
             throw new Error("Something went wrong!");
         }
 
-        User.find({"usernameLower" : username.toLowerCase()}).
+        User.find({"$or" : [{"usernameLower" : username.toLowerCase()},
+                            {"emailLower" : args.email.toLowerCase()}]}).
             exec(function(err, users){
             if(users.length === 0){
                 var userData = 
@@ -33,6 +35,7 @@ exports.addUser = function(args, callback)
                     "password": hash,
                     "uuid" : uuid.v1(),
                     "email" : args.email,
+                    "emailLower" : args.email.toLowerCase(),
                     "createDate" : new Date(),
                 };
                 var userRecord = new User(userData);
@@ -50,9 +53,16 @@ exports.addUser = function(args, callback)
                 });
             }
             else{
-                console.error("Tried to create acct with existing username");
-                callback(1);
-                return;
+                if(users[0].usernameLower === username.toLowerCase()){
+                    console.error("Tried to create acct with existing username");
+                    callback(1);
+                    return;
+                }
+                else{
+                    console.error("Tried to create acct with existing email");
+                    callback(2);
+                    return;
+                }
             }
         });
     });

@@ -9,9 +9,9 @@ db.once("open",function(callback){
     console.log("Booyah!");
     var userCollection = require("../userCollection.js");
     userCollection.addUser({
-            username : "testUser2",
+            username : "testUser22",
             password : "123",
-            email : "kevin2@kevin.com",
+            email : "KEviN@kevin.CoM",
         }, 
         function(rc, response){
             if(rc){
