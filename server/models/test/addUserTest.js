@@ -11,7 +11,7 @@ db.once("open",function(callback){
     userCollection.addUser({
             username : "testUser2",
             password : "123",
-            email : "kevin2@kevin.com",
+            email : "KEVIN@kevin.COM",
         }, 
         function(rc, response){
             if(rc){

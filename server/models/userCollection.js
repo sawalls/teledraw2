@@ -9,6 +9,7 @@ var UserSchema = new Schema({
     usernameLower : String,
     uuid : String,
     email : String,
+    emailLower : String,
     createDate : Date,
 });
 
@@ -33,6 +34,7 @@ exports.addUser = function(args, callback)
                     "password": hash,
                     "uuid" : uuid.v1(),
                     "email" : args.email,
+                    "emailLower" : args.email.toLowerCase(),
                     "createDate" : new Date(),
                 };
                 var userRecord = new User(userData);
