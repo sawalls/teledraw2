@@ -26,10 +26,10 @@ module.exports = function(){
     });
     app.use(sessionMiddleware);
 
-    app.set("views", "./views");
+    app.set("views", "./client/views");
     app.set("view engine", "jade");
 
-    app.use(express.static("./public"));
+    app.use(express.static("./client/public"));
 
     return [app, io];
 }

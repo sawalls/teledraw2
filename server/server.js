@@ -1,6 +1,7 @@
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
 var express_io  = require("./config/express_io.js");
+var mongoose = require("./config/mongoose.js");
 var Server = require("http").Server;
 var session = require("express-session");
 

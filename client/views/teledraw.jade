@@ -1,6 +1,16 @@
 doctype html
 html
     head
-        title Teledraw!
+        title Teledraw! 
+        script(src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js")
+        script(src="/socket.io/socket.io.js")
+        script(src="app.js")
     body
-        p Hello Teledraw!
+        p Welcome to Teledraw!
+        div(ng-app="teledraw", ng-controller="appController")
+            div(ng-show="showLogin")
+                include ./login.jade
+            div(ng-show="showCreateAcct")
+                include ./createAcct.jade
+            div(ng-show="showHomepage")
+                include ./homepage.jade
