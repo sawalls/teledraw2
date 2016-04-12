@@ -24,7 +24,8 @@ exports.addUser = function(args, callback)
             throw new Error("Something went wrong!");
         }
 
-        User.find({"usernameLower" : username.toLowerCase()}).
+        User.find({"$or" : [{"usernameLower" : username.toLowerCase()},
+                            {"emailLower" : args.email.toLowerCase()}]}).
             exec(function(err, users){
             if(users.length === 0){
                 var userData = 
@@ -52,9 +53,16 @@ exports.addUser = function(args, callback)
                 });
             }
             else{
-                console.error("Tried to create acct with existing username");
-                callback(1);
-                return;
+                if(users[0].usernameLower === username.toLowerCase()){
+                    console.error("Tried to create acct with existing username");
+                    callback(1);
+                    return;
+                }
+                else{
+                    console.error("Tried to create acct with existing email");
+                    callback(2);
+                    return;
+                }
             }
         });
     });
