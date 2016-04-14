@@ -179,3 +179,35 @@ exports.findCurrentGames = function(args, callback){
     );
 };
 
+exports.findGameForPlayer = function(args, callback){
+    console.log(args);
+    Game.find({
+        uuid : args.gameUuid,
+        },
+        {},
+        function(err, response){
+            if(err){
+                console.error(err);
+                callback(-1, err);
+            }
+            else{
+                if(response.size === 0){
+                    callback(1, {error : "No such game uuid"});
+                    return;
+                }
+                var players = response[0].players;
+                for(var i = 0; i < players.length; ++i)
+                {
+                    if(players[i].uuid === args.playerUuid){
+                        callback(0, response[0]);
+                        return;
+                    }
+                }
+                callback(2, {error : "Player is not in game"});
+            }
+        }
+    );
+};
+
+
+
