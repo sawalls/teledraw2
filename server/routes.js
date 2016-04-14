@@ -67,6 +67,8 @@ module.exports = function(app, io)
                     }
                     else{
                         socket.emit("createGameSuccessful", {gameUuid : response.gameUuid});
+                        socket.broadcast.emit("gameAdded", 
+                            {gameName : data.gameName, uuid : response.gameUuid});
                     }
                 }
             );

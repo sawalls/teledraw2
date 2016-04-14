@@ -20,6 +20,10 @@ app.controller("joinGameController", function($scope){
         );
     };
 
+    $scope.$on("userLoggedIn", function(){
+        socket.emit("getOpenGameList", {});
+    });
+
     socket.on("joinGameError", function(data){
         console.log("Join Game Error!");
         console.log(data);
@@ -34,6 +38,22 @@ app.controller("joinGameController", function($scope){
         console.log(data);
         $scope.$apply(function(){
             $scope.$emit("joinGameSuccessful", data);
+        });
+    });
+
+    socket.on("openGameList", function(data){
+        console.log("Received open game list");
+        console.log(data);
+        $scope.$apply(function(){
+            if(data.gameList)
+            $scope.gameList = data.gameList;
+        });
+    });
+
+    socket.on("gameAdded", function(data){
+        console.log("Received gameAdded");
+        $scope.$apply(function(){
+            $scope.gameList.push(data);
         });
     });
 });
