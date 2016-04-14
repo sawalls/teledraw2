@@ -51,7 +51,11 @@ exports.addGame = function(args, callback)
                 callback(-1, err);
             }
             else{
-                callback(0, {gameUuid : gameUuid});
+                exports.addPlayerToGame({
+                    playerUuid : creatorUuid,
+                    gameUuid : gameUuid,
+                    password : password,
+                    }, callback);
             }
         });
     };
@@ -113,7 +117,7 @@ exports.addPlayerToGame = function(args, callback){
                             callback(-1, err);
                             return;
                         }
-                        callback(0);
+                        callback(0, {gameUuid : gameUuid});
                         return;
                     }
                 );
@@ -140,6 +144,20 @@ exports.addPlayerToGame = function(args, callback){
             else{
                 addUser();
             }
+        }
+    );
+};
+
+exports.findOpenGames = function(args, callback){
+    Game.find({
+        gameState : GAMESTATES.GAME_NOT_STARTED,
+        },
+        {gameName : 1, uuid : 1},
+        function(err, response){
+            if(err){
+                callback(-1, err);
+            }
+            callback(0, response);
         }
     );
 };
