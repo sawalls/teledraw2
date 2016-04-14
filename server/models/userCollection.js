@@ -73,7 +73,6 @@ exports.loginUser = function(args, callback)
     var username = args.username;
     var password = args.password;
     User.find({"username" : username}).
-        select("password").
         exec(function(err, users){
             if(err){
                 console.error("Error finding user");
@@ -94,7 +93,7 @@ exports.loginUser = function(args, callback)
                         return;
                     }
                     else if(verified){
-                        callback(0);
+                        callback(0, users[0]);
                         return;
                     }
                 });
