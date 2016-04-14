@@ -1,3 +1,12 @@
 script(src="homepage.js")
 div(ng-controller="homepageController")
     p Welcome {{username}}
+    div(ng-show="showCurrentGames")
+        include ./currentGames.jade
+    div(ng-show="showCreateGame")
+        include ./createGame.jade
+    br
+    div(ng-show="showJoinGame")
+        include ./joinGame.jade
+    div(ng-show="showGame")
+        include ./game.jade

@@ -1,0 +1,11 @@
+script(src="currentGames.js")
+div(ng-controller="currentGamesController")
+    p Current Games
+    p(ng-show="showError") {{currentGamesErrorMsg}}
+    table
+        tr
+            th Game Name
+            th Creator
+        tr(ng-repeat="game in gameList", ng-click="rowClickedHandler(game)")
+            td {{game.gameName}}
+

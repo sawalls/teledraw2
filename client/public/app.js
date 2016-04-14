@@ -36,9 +36,13 @@ app.controller("appController", function($scope){
     });
 
     function userCredentialsAccepted(args){
+        console.log(args);
         $scope.username = args.username;
+        $scope.playerUuid = args.uuid;
+        console.log($scope.playerUuid);
         hideAll();
         $scope.showHomepage = 1;
+        $scope.$broadcast("userLoggedIn");
     }
 
     $scope.$on("loginSuccessful", function(event, args){
