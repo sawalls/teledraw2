@@ -1,0 +1,9 @@
+script(src="createGame.js")
+div(ng-controller="createGameController")
+    p Create a game!
+    | Game Name: #[input(type="text", ng-model="gameName")] #[br]
+    | Password: #[input(type="password", ng-model="password")] #[br]
+    button(ng-click="createGameBtnClickedHandler()") Create Game
+    br
+    p(ng-show="showError") {{createGameErrorMsg}}
+
