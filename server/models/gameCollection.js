@@ -162,3 +162,20 @@ exports.findOpenGames = function(args, callback){
     );
 };
 
+exports.findCurrentGames = function(args, callback){
+    console.log(args);
+    Game.find({
+            "players" : {"$elemMatch" :  {"uuid" : args.playerUuid}}
+        },
+        {gameName : 1},
+        function(err, response){
+            if(err){
+                callback(-1, err);
+            }
+            else{
+                callback(0, response);
+            }
+        }
+    );
+};
+
