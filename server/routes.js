@@ -26,7 +26,8 @@ module.exports = function(app, io)
                 }
                 else{
                     console.log("Login Successful");
-                    socket.emit("loginSuccessful", {username : data.username});
+                    console.log(response);
+                    socket.emit("loginSuccessful", {username : data.username, uuid : response.uuid});
                 }
             });
         });
@@ -51,6 +52,41 @@ module.exports = function(app, io)
                 }
             });
         });
-        
+
+        socket.on("createGame", function(data){
+            console.log("Create Game attempted");
+            console.log(data);
+            gameCollection.addGame({
+                gameName : data.gameName,
+                password : data.password,
+                creatorUuid : data.creatorUuid,
+                }, function(rc, response){
+                    if(rc){
+                        console.error(response.error);
+                        socket.emit("createGameError", {rc : rc, msg : response.error});
+                    }
+                    else{
+                        socket.emit("createGameSuccessful", {gameUuid : response.gameUuid});
+                    }
+                }
+            );
+        });
+
+        socket.on("getOpenGameList", function(data){
+            console.log("getOpenGameList");
+            gameCollection.findOpenGames({}, function(rc, response){
+                data = {};
+                if(rc){
+                    console.error("Failed to get initial game list!");
+                    data.error = "There is a problem with the server. Please try again later";
+                }
+                else{
+                    data.gameList = response;
+                }
+                console.log(data);
+                socket.emit("openGameList", data);
+                }
+            );
+        });
     });
 }
