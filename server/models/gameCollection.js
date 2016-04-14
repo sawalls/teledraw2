@@ -167,7 +167,7 @@ exports.findCurrentGames = function(args, callback){
     Game.find({
             "players" : {"$elemMatch" :  {"uuid" : args.playerUuid}}
         },
-        {gameName : 1},
+        {gameName : 1, uuid : 1},
         function(err, response){
             if(err){
                 callback(-1, err);

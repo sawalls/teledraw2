@@ -1,7 +1,7 @@
-script(src="joinGame.js")
-div(ng-controller="joinGameController")
-    p Join a game!
-    p(ng-show="showError") {{joinGameErrorMsg}}
+script(src="currentGames.js")
+div(ng-controller="currentGamesController")
+    p Current Games
+    p(ng-show="showError") {{currentGamesErrorMsg}}
     table
         tr
             th Game Name

@@ -118,7 +118,24 @@ module.exports = function(app, io)
                         socket.emit("joinGameError", {msg : response.error});
                     }
                     else{
-                        socket.emit("joinGameSuccessful");
+                        socket.emit("joinGameSuccessful", data);
+                    }
+                }
+            );
+        });
+
+        socket.on("getCurrentGames", function(data){
+            console.log("getCurrentGames");
+            console.log(data);
+            gameCollection.findCurrentGames({
+                playerUuid : data.playerUuid,
+                }, function(rc, response){
+                    if(rc){
+                        console.error(response);
+                        socket.emit("serverFailure");
+                    }
+                    else{
+                        socket.emit("currentGames", {gameList : response});
                     }
                 }
             );
