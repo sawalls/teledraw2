@@ -68,7 +68,10 @@ module.exports = function(app, io)
                     else{
                         socket.emit("createGameSuccessful", {gameUuid : response.gameUuid});
                         socket.broadcast.emit("gameAdded", 
-                            {gameName : data.gameName, uuid : response.gameUuid});
+                            {gameName : data.gameName, 
+                            uuid : response.gameUuid,
+                            hasPassword : data.password === undefined ? false : true
+                            });
                     }
                 }
             );
@@ -83,10 +86,40 @@ module.exports = function(app, io)
                     data.error = "There is a problem with the server. Please try again later";
                 }
                 else{
-                    data.gameList = response;
+                    data.gameList = [];
+                    for(var i = 0; i < response.length; ++i){
+                        console.log(response[i]);
+                        data.gameList.push({
+                            gameName : response[i].gameName,
+                            uuid : response[i].uuid,
+                            hasPassword : response[i].password === undefined ? false : true,
+                        });
+                    }
                 }
                 console.log(data);
                 socket.emit("openGameList", data);
+                }
+            );
+        });
+
+        socket.on("joinGame", function(data){
+            console.log("joinGame");
+            console.log(data);
+            gameCollection.addPlayerToGame({
+                playerUuid : data.playerUuid,
+                gameUuid : data.gameUuid,
+                password : data.password,},
+                function(rc, response){
+                    if(rc < 0){
+                        console.error(response);
+                        socket.emit("serverFailure");
+                    }
+                    else if(rc > 0){
+                        socket.emit("joinGameError", {msg : response.error});
+                    }
+                    else{
+                        socket.emit("joinGameSuccessful");
+                    }
                 }
             );
         });

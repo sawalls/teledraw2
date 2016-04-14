@@ -152,7 +152,7 @@ exports.findOpenGames = function(args, callback){
     Game.find({
         gameState : GAMESTATES.GAME_NOT_STARTED,
         },
-        {gameName : 1, uuid : 1},
+        {gameName : 1, uuid : 1, password : 1},
         function(err, response){
             if(err){
                 callback(-1, err);

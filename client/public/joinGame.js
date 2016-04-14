@@ -6,16 +6,26 @@ app.controller("joinGameController", function($scope){
     $scope.rowClickedHandler = function(game){
         console.log("In rowClickedHandler");
         console.log(game);
+        if(game.hasPassword){
+            var password = prompt("Please enter password");
+            if(password != null){
+                game.password = password;
+                joinGame(game);
+            }
+        }
+        else{
+            joinGame(game);
+        }
     }
-    function joinGame(){
-        console.log($scope.gameName);
-        console.log($scope.password);
+
+    function joinGame(game){
         console.log($scope.playerUuid);
         socket.emit("joinGame",
             {
-                gameName : $scope.gameName,
-                password : $scope.password,
-                creatorUuid : $scope.playerUuid,
+                gameName : game.gameName,
+                gameUuid : game.uuid,
+                password : game.password,
+                playerUuid : $scope.playerUuid,
             }
         );
     };
