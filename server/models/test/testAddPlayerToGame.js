@@ -10,7 +10,9 @@ db.once("open",function(callback){
     var gameCollection = require("../gameCollection.js");
     gameCollection.addPlayerToGame({
         playerUuid : "32123",
-        gameUuid : "8047d190-00c0-11e6-8727-91c553183ba6",
+        playerUsername : "TEST2",
+        gameUuid : "77109750-0328-11e6-9a34-75de6b5786eb",
+        password : "123",
     }, function(rc, response){
             if(rc){
                 console.error("Something went wrong!");

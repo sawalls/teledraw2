@@ -8,17 +8,20 @@ var GameSchema = new Schema({
     password : String,
     uuid : String,
     creatorUuid : String,
+    creatorUsername : String,
     createDate : Date,
     gameState : Number,
     players : [
         {
             uuid : String,
+            username : String,
             mailbox : [
             {
                 ownerUuid : String,
+                ownerUsername : String,
                 submissions : [
                 {
-                    author : String,
+                    authorUuid : String,
                     content : String,
                 }
                 ]
@@ -42,6 +45,7 @@ exports.addGame = function(args, callback)
     var password = args.password;
     var gameUuid = uuid.v1();
     var creatorUuid = args.creatorUuid;
+    var creatorUsername = args.creatorUsername;
 
     function saveGame(gameData){
         var gameRecord = new Game(gameData);
@@ -53,6 +57,7 @@ exports.addGame = function(args, callback)
             else{
                 exports.addPlayerToGame({
                     playerUuid : creatorUuid,
+                    playerUsername : creatorUsername,
                     gameUuid : gameUuid,
                     password : password,
                     }, callback);
@@ -64,6 +69,7 @@ exports.addGame = function(args, callback)
         gameName : gameName,
         uuid : gameUuid,
         creatorUuid : creatorUuid,
+        creatorUsername : creatorUsername,
         createDate : new Date(),
         gameState : GAMESTATES.GAME_NOT_STARTED,
     };
@@ -85,6 +91,7 @@ exports.addGame = function(args, callback)
 
 exports.addPlayerToGame = function(args, callback){
     var playerUuid = args.playerUuid;
+    var playerUsername = args.playerUsername;
     var gameUuid = args.gameUuid;
     var password = args.password;
     Game.find({"uuid" : gameUuid},
@@ -111,7 +118,8 @@ exports.addPlayerToGame = function(args, callback){
             function addUser(){
                 Game.update({"uuid" : gameUuid},
                     {"$push" : {"players" : 
-                       {"uuid" : playerUuid}}},
+                       {"uuid" : playerUuid, 
+                       "username" : playerUsername}}},
                     function(err, response){
                         if(err){
                             callback(-1, err);
