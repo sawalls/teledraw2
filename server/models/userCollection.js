@@ -112,3 +112,19 @@ exports.findByUsername = function(args, callback)
         });
 };
 
+exports.findUsernamesByUuid = function(args, callback){
+    User.find({
+        uuid : {"$in" : args.uuids}
+        },
+        {username : 1, uuid : 1},
+        function(err, response){
+            if(err){
+                console.error(err);
+                callback(-1, err);
+            }
+            callback(0, response);
+        }
+    );
+
+};
+

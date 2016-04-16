@@ -60,12 +60,14 @@ module.exports = function(app, io)
                 gameName : data.gameName,
                 password : data.password,
                 creatorUuid : data.creatorUuid,
+                creatorUsername : data.creatorUsername,
                 }, function(rc, response){
                     if(rc){
                         console.error(response.error);
                         socket.emit("createGameError", {rc : rc, msg : response.error});
                     }
                     else{
+                        socket.join(response.gameUuid);
                         socket.emit("createGameSuccessful", {gameUuid : response.gameUuid});
                         socket.broadcast.emit("gameAdded", 
                             {gameName : data.gameName, 
@@ -107,6 +109,7 @@ module.exports = function(app, io)
             console.log(data);
             gameCollection.addPlayerToGame({
                 playerUuid : data.playerUuid,
+                username : data.playerUsername,
                 gameUuid : data.gameUuid,
                 password : data.password,},
                 function(rc, response){
@@ -118,7 +121,12 @@ module.exports = function(app, io)
                         socket.emit("joinGameError", {msg : response.error});
                     }
                     else{
+                        socket.join(data.gameUuid);
                         socket.emit("joinGameSuccessful", data);
+                        io.to(data.gameUuid).emit("playerJoined",{
+                            uuid : data.playerUuid,
+                            username : data.playerUsername,
+                        });
                     }
                 }
             );
@@ -140,5 +148,53 @@ module.exports = function(app, io)
                 }
             );
         });
+
+        socket.on("getGameInfo", function(data){
+            console.log("getGameInfo");
+            console.log(data);
+            gameCollection.findGameForPlayer(data, 
+                function(rc, response){
+                    if(rc < 0){
+                        console.error(response);
+                        socket.emit("serverFailure");
+                    }
+                    else if(rc > 0){
+                        console.log(response);
+                        socket.emit("getGameInfoError", response);
+                    }
+                    else{
+                        console.log(response);
+                        socket.emit("getGameInfoSuccessful", response);
+                    }
+                }
+            );
+        });
+
+        socket.on("startGame", function(data){
+            console.log("startGame");
+            console.log(data);
+            gameCollection.startGame({uuid : data.gameUuid},
+                function(rc, response){
+                    console.log(response);
+                    if(rc < 0){
+                        console.log(response);
+                        socket.emit("serverFailure");
+                    }
+                    else if(rc > 0){
+                        console.log(response);
+                        socket.emit("startGameError", response);
+                    }
+                    else{
+                        console.log(response);
+                        socket.emit("startGameSuccessful");
+                        io.to(data.gameUuid).emit("gameStarted", {});
+                    }
+                }
+            );
+
+        });
+
+
     });
+
 }

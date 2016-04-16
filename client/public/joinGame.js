@@ -26,6 +26,7 @@ app.controller("joinGameController", function($scope){
                 gameUuid : game.uuid,
                 password : game.password,
                 playerUuid : $scope.playerUuid,
+                playerUsername : $scope.username,
             }
         );
     };
