@@ -57,7 +57,7 @@ exports.addGame = function(args, callback)
             else{
                 exports.addPlayerToGame({
                     playerUuid : creatorUuid,
-                    playerUsername : creatorUsername,
+                    username : creatorUsername,
                     gameUuid : gameUuid,
                     password : password,
                     }, callback);
@@ -91,7 +91,7 @@ exports.addGame = function(args, callback)
 
 exports.addPlayerToGame = function(args, callback){
     var playerUuid = args.playerUuid;
-    var playerUsername = args.playerUsername;
+    var username = args.username;
     var gameUuid = args.gameUuid;
     var password = args.password;
     Game.find({"uuid" : gameUuid},
@@ -119,7 +119,7 @@ exports.addPlayerToGame = function(args, callback){
                 Game.update({"uuid" : gameUuid},
                     {"$push" : {"players" : 
                        {"uuid" : playerUuid, 
-                       "username" : playerUsername}}},
+                       "username" : username}}},
                     function(err, response){
                         if(err){
                             callback(-1, err);
@@ -215,6 +215,20 @@ exports.findGameForPlayer = function(args, callback){
             }
         }
     );
+};
+
+exports.startGame = function(args, callback){
+    console.log(args);
+    Game.update({uuid : args.uuid},
+        {gameState : GAMESTATES.GAME_STARTED},
+        function(err, response){
+            if(err){
+                callback(-1, err);
+            }
+            else{
+                callback(0, response);
+            }
+        });
 };
 
 
