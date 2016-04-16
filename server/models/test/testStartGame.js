@@ -8,11 +8,8 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open",function(callback){
     console.log("Booyah!");
     var gameCollection = require("../gameCollection.js");
-    gameCollection.addPlayerToGame({
-        playerUuid : "32123",
-        playerUsername : "TEST2",
-        gameUuid : "77109750-0328-11e6-9a34-75de6b5786eb",
-        password : "123",
+    gameCollection.startGame({
+        uuid : "21373220-03dd-11e6-a4e9-0349af69d7c0",
     }, function(rc, response){
             if(rc){
                 console.error("Something went wrong!");

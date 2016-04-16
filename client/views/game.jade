@@ -1,4 +1,9 @@
 script(src="game.js")
 div(ng-controller="gameController")
     p You are in game {{gameName}}
+    p(ng-show="showGameError") {{gameErrorMsg}}
+    div(ng-show="showLobby")
+        include ./lobby.jade
+    div(ng-show="showMainGamePage")
+        include ./mainGamePage.jade
 

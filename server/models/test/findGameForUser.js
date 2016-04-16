@@ -8,22 +8,20 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open",function(callback){
     console.log("Booyah!");
     var gameCollection = require("../gameCollection.js");
-    gameCollection.addPlayerToGame({
-        playerUuid : "32123",
-        playerUsername : "TEST2",
-        gameUuid : "77109750-0328-11e6-9a34-75de6b5786eb",
-        password : "123",
-    }, function(rc, response){
+    gameCollection.findGameForPlayer({
+            playerUuid : "70a81ec0-0101-11e6-a96d-e389ff38d7bb",
+            gameUuid : "2b90f8b0-024c-11e6-a933-f754feae506c",
+        },
+        function(rc, response){
             if(rc){
-                console.error("Something went wrong!");
+                console.error("There was an error");
                 console.error(response);
-                process.exit(1);
             }
             else{
-                console.error("Success!");
-                process.exit(0);
+                console.log(response);
             }
-        });
-    }
-);
+            process.exit(0);
+        }
+    );
+});
 

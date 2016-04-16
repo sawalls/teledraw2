@@ -8,17 +8,20 @@ var GameSchema = new Schema({
     password : String,
     uuid : String,
     creatorUuid : String,
+    creatorUsername : String,
     createDate : Date,
     gameState : Number,
     players : [
         {
             uuid : String,
+            username : String,
             mailbox : [
             {
                 ownerUuid : String,
+                ownerUsername : String,
                 submissions : [
                 {
-                    author : String,
+                    authorUuid : String,
                     content : String,
                 }
                 ]
@@ -42,6 +45,7 @@ exports.addGame = function(args, callback)
     var password = args.password;
     var gameUuid = uuid.v1();
     var creatorUuid = args.creatorUuid;
+    var creatorUsername = args.creatorUsername;
 
     function saveGame(gameData){
         var gameRecord = new Game(gameData);
@@ -53,6 +57,7 @@ exports.addGame = function(args, callback)
             else{
                 exports.addPlayerToGame({
                     playerUuid : creatorUuid,
+                    username : creatorUsername,
                     gameUuid : gameUuid,
                     password : password,
                     }, callback);
@@ -64,6 +69,7 @@ exports.addGame = function(args, callback)
         gameName : gameName,
         uuid : gameUuid,
         creatorUuid : creatorUuid,
+        creatorUsername : creatorUsername,
         createDate : new Date(),
         gameState : GAMESTATES.GAME_NOT_STARTED,
     };
@@ -85,6 +91,7 @@ exports.addGame = function(args, callback)
 
 exports.addPlayerToGame = function(args, callback){
     var playerUuid = args.playerUuid;
+    var username = args.username;
     var gameUuid = args.gameUuid;
     var password = args.password;
     Game.find({"uuid" : gameUuid},
@@ -111,7 +118,8 @@ exports.addPlayerToGame = function(args, callback){
             function addUser(){
                 Game.update({"uuid" : gameUuid},
                     {"$push" : {"players" : 
-                       {"uuid" : playerUuid}}},
+                       {"uuid" : playerUuid, 
+                       "username" : username}}},
                     function(err, response){
                         if(err){
                             callback(-1, err);
@@ -178,4 +186,50 @@ exports.findCurrentGames = function(args, callback){
         }
     );
 };
+
+exports.findGameForPlayer = function(args, callback){
+    console.log(args);
+    Game.find({
+        uuid : args.gameUuid,
+        },
+        {},
+        function(err, response){
+            if(err){
+                console.error(err);
+                callback(-1, err);
+            }
+            else{
+                if(response.size === 0){
+                    callback(1, {error : "No such game uuid"});
+                    return;
+                }
+                var players = response[0].players;
+                for(var i = 0; i < players.length; ++i)
+                {
+                    if(players[i].uuid === args.playerUuid){
+                        callback(0, response[0]);
+                        return;
+                    }
+                }
+                callback(2, {error : "Player is not in game"});
+            }
+        }
+    );
+};
+
+exports.startGame = function(args, callback){
+    console.log(args);
+    Game.update({uuid : args.uuid},
+        {gameState : GAMESTATES.GAME_STARTED},
+        function(err, response){
+            if(err){
+                callback(-1, err);
+            }
+            else{
+                callback(0, response);
+            }
+        });
+};
+
+
 

@@ -15,6 +15,7 @@ app.controller("createGameController", function($scope){
                 gameName : $scope.gameName,
                 password : $scope.password,
                 creatorUuid : $scope.playerUuid,
+                creatorUsername : $scope.username,
             }
         );
     };

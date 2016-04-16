@@ -17,6 +17,7 @@ angular.module("teledraw").controller("homepageController", function($scope){
     $scope.$on("createGameSuccessful", function(event, data){
         console.log("Create game successful!");
         console.log(data);
+        navigateToGame(data);
     });
 
     function navigateToGame(data){

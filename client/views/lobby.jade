@@ -1,0 +1,9 @@
+script(src="lobby.js")
+div(ng-controller="lobbyController")
+    button(ng-click="startGameBtnClickedHandler()",
+        ng-show="playerIsCreator") Start the Game
+    table
+        tr
+            th Players
+        tr(ng-repeat="player in players")
+            td {{player.username}}

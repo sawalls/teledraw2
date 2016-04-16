@@ -9,9 +9,10 @@ db.once("open",function(callback){
     console.log("Booyah!");
     var gameCollection = require("../gameCollection.js");
     gameCollection.addGame({
-        gameName : "gameWithPassword",
+        gameName : "gameWithUsername",
         password : "123",
         creatorUuid : "12345",
+        creatorUsername : "TEST",
     }, function(rc, response){
         if(rc){
             console.error("Something went wrong!");
@@ -23,6 +24,7 @@ db.once("open",function(callback){
             gameCollection.addGame({
                 gameName : "gameWithoutPassword",
                 creatorUuid : "12345",
+                creatorUsername : "TEST",
             }, function(rc, response){
                 if(rc){
                     console.error("Something went wrong!");
