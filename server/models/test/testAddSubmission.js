@@ -8,22 +8,21 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open",function(callback){
     console.log("Booyah!");
     var gameCollection = require("../gameCollection.js");
-    gameCollection.addPlayerToGame({
-        playerUuid : "32123",
-        username : "TEST2",
-        gameUuid : "41729470-03de-11e6-be9f-27b0932f1fe6",
-        password : "1",
-    }, function(rc, response){
+    userCollection.addUser({
+            username : "testUser22",
+            password : "123",
+            email : "KEviN@kevin.CoM",
+        }, 
+        function(rc, response){
             if(rc){
-                console.error("Something went wrong!");
+                console.error("There was an error");
                 console.error(response);
-                process.exit(1);
             }
             else{
-                console.error("Success!");
-                process.exit(0);
+                console.log("Save sucessful!");
             }
-        });
-    }
-);
+            process.exit(0);
+        }
+    );
+});
 

@@ -119,7 +119,13 @@ exports.addPlayerToGame = function(args, callback){
                 Game.update({"uuid" : gameUuid},
                     {"$push" : {"players" : 
                        {"uuid" : playerUuid, 
-                       "username" : username}}},
+                       "username" : username,
+                       "mailbox" : [
+                           {
+                               ownerUuid : playerUuid,
+                               ownerUsername : username,
+                           }
+                       ]}}},
                     function(err, response){
                         if(err){
                             callback(-1, err);
@@ -229,6 +235,55 @@ exports.startGame = function(args, callback){
                 callback(0, response);
             }
         });
+};
+
+exports.addSubmission = function(args, callback){
+    console.log(args);
+    Game.find({uuid : args.gameUuid},
+        function(err, response){
+            if(err){
+                console.error(err);
+                callback(-1, err);
+            }
+            if(response.length === 0){
+                console.error("No game with uuid " + args.gameUuid);
+                callback(1, {msg : "No game with uuid " + args.gameUuid});
+            }
+            else{
+                var game = response[0];                
+                //Find the chain that was submitted to
+                var players = game.players;
+                var mailbox;
+                var nextPlayerUuid;
+                for(var i = 0; i < players.size; ++i){
+                    if(players[i].uuid = args.playerUuid){
+                        mailbox = players[i].mailbox;
+                        var nextPlayerIndex = (i + 1)%players.length;
+                        nextPlayerUuid = players[nextPlayerIndex].uuid;
+                    }
+                }
+                if(!mailbox){
+                    var msg = "Player " + args.playerUuid + " is not in game " + args.gameUuid;
+                    console.error(msg);
+                    callback(-2, msg);
+                }
+                var chain = mailbox.shift();
+                //Remove that chain from the player's mailbox
+                Game.update({uuid : args.gameUuid,
+                    "players" : {"uuid" : args.playerUuid}},
+                    {"$pop" : {"mailbox" : -1}},
+                    function(err, response){
+                        //Add chain to the next player's mailbox
+                        Game.update({uuid : args.gameUuid},
+                            {},
+                            function(err, response){
+                            }
+                        );
+                    }
+                );
+            }
+        }
+    );
 };
 
 
