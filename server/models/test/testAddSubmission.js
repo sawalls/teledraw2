@@ -8,11 +8,13 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open",function(callback){
     console.log("Booyah!");
     var gameCollection = require("../gameCollection.js");
-    userCollection.addUser({
-            username : "testUser22",
-            password : "123",
-            email : "KEviN@kevin.CoM",
-        }, 
+    gameCollection.addSubmission({
+            gameUuid : "41729470-03de-11e6-be9f-27b0932f1fe6",
+            playerUuid : "32123",
+            submission : {
+              content : "Banana"
+            },
+        },
         function(rc, response){
             if(rc){
                 console.error("There was an error");
@@ -25,4 +27,3 @@ db.once("open",function(callback){
         }
     );
 });
-
