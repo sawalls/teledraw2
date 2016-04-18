@@ -16,16 +16,16 @@ var GameSchema = new Schema({
             uuid : String,
             username : String,
             mailbox : [
-            {
-                ownerUuid : String,
-                ownerUsername : String,
-                submissions : [
                 {
-                    authorUuid : String,
-                    content : String,
+                    ownerUuid : String,
+                    ownerUsername : String,
+                    submissions : [
+                        {
+                            authorUuid : String,
+                            content : String,
+                        }
+                    ]
                 }
-                ]
-            }
             ]
         }
     ],
@@ -60,11 +60,11 @@ exports.addGame = function(args, callback)
                     username : creatorUsername,
                     gameUuid : gameUuid,
                     password : password,
-                    }, callback);
+                }, callback);
             }
         });
     };
-    
+
     var gameData = {
         gameName : gameName,
         uuid : gameUuid,
@@ -95,126 +95,132 @@ exports.addPlayerToGame = function(args, callback){
     var gameUuid = args.gameUuid;
     var password = args.password;
     Game.find({"uuid" : gameUuid},
-        function(err, response){
-            if(err){
-                console.error(err);
-                callback(-1, err);
+    function(err, response){
+        if(err){
+            console.error(err);
+            callback(-1, err);
+            return;
+        }
+        if(response.length === 0){
+            callback(1, {error : "Invalid gameUuid"});
+            return;
+        }
+        var players = response[0].players;
+        //Check if player is already in game
+        for(var i = 0; i < players.length; ++i)
+        {
+            if(players[i].uuid === playerUuid){
+                callback(2, {error : "Player is already in game"});
                 return;
-            }
-            if(response.length === 0){
-                callback(1, {error : "Invalid gameUuid"});
-                return;
-            }
-            var players = response[0].players;
-            //Check if player is already in game
-            for(var i = 0; i < players.length; ++i)
-            {
-                if(players[i].uuid === playerUuid){
-                    callback(2, {error : "Player is already in game"});
-                    return;
-                }
-            }
-
-            function addUser(){
-                Game.update({"uuid" : gameUuid},
-                    {"$push" : {"players" : 
-                       {"uuid" : playerUuid, 
-                       "username" : username}}},
-                    function(err, response){
-                        if(err){
-                            callback(-1, err);
-                            return;
-                        }
-                        callback(0, {gameUuid : gameUuid});
-                        return;
-                    }
-                );
-            };
-
-            //If there's a password, check it
-            if(response[0].password){
-                passHash(password).verifyAgainst(
-                    response[0].password,
-                    function(err, validated){
-                        if(err){
-                            callback(-1, err);
-                            return;
-                        }
-                        if(!validated){
-                            callback(3, {error : "Invalid password"});
-                        }
-                        else{
-                            addUser();
-                        }
-                    }
-                );
-            }
-            else{
-                addUser();
             }
         }
-    );
+
+        function addUser(){
+            Game.update({"uuid" : gameUuid},
+            {"$push" : {"players" :
+            {"uuid" : playerUuid,
+            "username" : username,
+            "mailbox" : [
+                {
+                    ownerUuid : playerUuid,
+                    ownerUsername : username,
+                }
+            ]}}},
+            function(err, response){
+                if(err){
+                    callback(-1, err);
+                    return;
+                }
+                callback(0, {gameUuid : gameUuid});
+                return;
+            }
+        );
+    };
+
+    //If there's a password, check it
+    if(response[0].password){
+        passHash(password).verifyAgainst(
+            response[0].password,
+            function(err, validated){
+                if(err){
+                    callback(-1, err);
+                    return;
+                }
+                if(!validated){
+                    callback(3, {error : "Invalid password"});
+                }
+                else{
+                    addUser();
+                }
+            }
+        );
+    }
+    else{
+        addUser();
+    }
+}
+);
 };
 
 exports.findOpenGames = function(args, callback){
     Game.find({
         gameState : GAMESTATES.GAME_NOT_STARTED,
-        },
-        {gameName : 1, uuid : 1, password : 1},
-        function(err, response){
-            if(err){
-                callback(-1, err);
-            }
-            callback(0, response);
+    },
+    {gameName : 1, uuid : 1, password : 1},
+    function(err, response){
+        if(err){
+            callback(-1, err);
         }
-    );
+        callback(0, response);
+    }
+);
 };
 
 exports.findCurrentGames = function(args, callback){
     console.log(args);
     Game.find({
-            "players" : {"$elemMatch" :  {"uuid" : args.playerUuid}}
-        },
-        {gameName : 1, uuid : 1},
-        function(err, response){
-            if(err){
-                callback(-1, err);
-            }
-            else{
-                callback(0, response);
-            }
+        "players" : {"$elemMatch" :  {"uuid" : args.playerUuid}}
+    },
+    {gameName : 1, uuid : 1},
+    function(err, response){
+        if(err){
+            callback(-1, err);
         }
-    );
+        else{
+            callback(0, response);
+        }
+    }
+);
 };
 
 exports.findGameForPlayer = function(args, callback){
     console.log(args);
     Game.find({
         uuid : args.gameUuid,
-        },
-        {},
-        function(err, response){
-            if(err){
-                console.error(err);
-                callback(-1, err);
+    },
+    {},
+    function(err, response){
+        if(err){
+            console.error(err);
+            callback(-1, err);
+        }
+        else{
+            if(response.size === 0){
+                callback(1, {error : "No such game uuid"});
+                return;
             }
-            else{
-                if(response.size === 0){
-                    callback(1, {error : "No such game uuid"});
+            var players = response[0].players;
+            for(var i = 0; i < players.length; ++i)
+            {
+                if(players[i].uuid === args.playerUuid){
+                    callback(0, response[0]);
                     return;
                 }
-                var players = response[0].players;
-                for(var i = 0; i < players.length; ++i)
-                {
-                    if(players[i].uuid === args.playerUuid){
-                        callback(0, response[0]);
-                        return;
-                    }
-                }
-                callback(2, {error : "Player is not in game"});
             }
+            callback(2, {error : "Player is not in game"});
         }
-    );
+    }
+);
 };
 
 exports.startGame = function(args, callback){
@@ -229,7 +235,81 @@ exports.startGame = function(args, callback){
                 callback(0, response);
             }
         });
+    };
+
+exports.addSubmission = function(args, callback){
+    console.log(args);
+    Game.find({uuid : args.gameUuid},
+        function(err, response){
+            if(err){
+                console.error(err);
+                callback(-1, err);
+            }
+            if(response.length === 0){
+                console.error("No game with uuid ")
+            }
+            else{
+                var game = response[0];
+                //Find the chain that was submitted to
+                var players = game.players;
+                var mailbox;
+                var nextPlayerUuid;
+                for(var i = 0; i < players.length; ++i){
+                    if(players[i].uuid === args.playerUuid){
+                        mailbox = players[i].mailbox;
+                        var nextPlayerIndex = (i + 1)%players.length;
+                        console.log("INDEX IS : " + i);
+                        nextPlayerUuid = players[nextPlayerIndex].uuid;
+                        console.log("NEXT PLAYER UUID: " + nextPlayerUuid);
+                        break;
+                    }
+                }
+                console.log("NEXT PLAYER UUID: " + nextPlayerUuid);
+                if(!mailbox){
+                    var msg = "Player " + args.playerUuid + " is not in game " + args.gameUuid;
+                    console.error(msg);
+                    callback(-2, msg);
+                }
+                console.log("Mailbox: " + mailbox);
+                var chain = mailbox.shift();
+                console.log("Chain: " + chain);
+                //Remove that chain from the player's mailbox
+
+                Game.update({uuid : args.gameUuid,
+                    "players.uuid" : args.playerUuid},
+                    {"$pop" : {"players.$.mailbox" : -1}},
+                    function(err, response){
+                        if(err){
+                            console.error(err);
+                            callback(-1, err);
+                        }
+                        console.log(response);
+                        chain.submissions.push({
+                            content : args.submission.content,
+                            authorUuid : args.playerUuid});
+                        //Add chain to the next player's mailbox
+                        Game.update({uuid : args.gameUuid,
+                            "players.uuid" : nextPlayerUuid},
+                            {"$push" : {"players.$.mailbox" : chain}},
+                            function(err, response){
+                                if(err){
+                                    console.error(err);
+                                    callback(-1, err);
+                                }
+                                else{
+                                    if(response.nModified === 0){
+                                        console.error("Failed to update mailbox");
+                                        callback(-2, {error : "Failed to update mailbox"});
+                                    }
+                                    else{
+                                        callback(0);
+                                    }
+                                }
+                            }
+                        );
+                    }
+                );
+            }
+        }
+    );
 };
-
-
-
