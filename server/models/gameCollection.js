@@ -19,6 +19,7 @@ var GameSchema = new Schema({
                 {
                     ownerUuid : String,
                     ownerUsername : String,
+                    state : Number,
                     submissions : [
                         {
                             authorUuid : String,
@@ -30,6 +31,12 @@ var GameSchema = new Schema({
         }
     ],
 });
+
+const CHAIN_STATES = {
+    NOT_STARTED : 0,
+    IN_PROGRESS : 1,
+    COMPLETED : 2,
+};
 
 const GAMESTATES = {
     GAME_NOT_STARTED : 0,
@@ -124,6 +131,7 @@ exports.addPlayerToGame = function(args, callback){
                 {
                     ownerUuid : playerUuid,
                     ownerUsername : username,
+                    state : CHAIN_STATES.NOT_STARTED,
                 }
             ]}}},
             function(err, response){
@@ -287,6 +295,12 @@ exports.addSubmission = function(args, callback){
                         chain.submissions.push({
                             content : args.submission.content,
                             authorUuid : args.playerUuid});
+                        if(chain.submissions.length === players.length){
+                            chain.state = CHAIN_STATES.COMPLETED;
+                        }
+                        else{
+                            chain.state = CHAIN_STATES.IN_PROGRESS;
+                        }
                         //Add chain to the next player's mailbox
                         Game.update({uuid : args.gameUuid,
                             "players.uuid" : nextPlayerUuid},
@@ -299,10 +313,18 @@ exports.addSubmission = function(args, callback){
                                 else{
                                     if(response.nModified === 0){
                                         console.error("Failed to update mailbox");
-                                        callback(-2, {error : "Failed to update mailbox"});
+                                        callback(-3, {error : "Failed to update mailbox"});
                                     }
                                     else{
-                                        callback(0);
+                                        callback(0, {
+                                            chainOwnerUuid : chain.ownerUuid,
+                                            chainState : chain.state,
+                                            targetPlayerUuid : nextPlayerUuid,
+                                            submission : {
+                                                content : args.submission.content,
+                                                authorUuid : args.playerUuid,
+                                            }}
+                                        );
                                     }
                                 }
                             }

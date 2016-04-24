@@ -37,7 +37,9 @@ angular.module("teledraw").controller("gameController", function($scope){
     });
 
     socket.on("getGameInfoSuccessful", function(data){
+        console.log("getGameInfoSuccessful");
         console.log(data);
+        console.log(data.mailbox);
         $scope.$apply(function(){
             if(data.gameState === 0){
                 $scope.showLobby = 1;
