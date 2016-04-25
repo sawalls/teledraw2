@@ -181,6 +181,7 @@ module.exports = function(app, io)
                             if(response.players[i].uuid === data.playerUuid){
                                 console.log("Found the player");
                                 var mailbox = response.players[i].mailbox;
+                                gameData.playerState = response.players[i].state;
                                 for(var j = 0; j < mailbox.length; ++j){
                                     var chainInfo = {
                                         chainOwnerUuid : mailbox[j].ownerUuid,
@@ -237,6 +238,9 @@ module.exports = function(app, io)
                     else{
                         console.log("emitting receivedSubmission");
                         io.to(data.gameUuid).emit("receivedSubmission", response);
+                        if(response.updatedPlayerState){
+                            socket.emit("updatedPlayerState", {playerState: response.updatedPlayerState});
+                        }
                     }
                 }
             );

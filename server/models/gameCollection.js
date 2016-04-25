@@ -252,15 +252,11 @@ exports.addSubmission = function(args, callback){
 
     //Find the game
     Game.find({uuid : gameUuid},
-        function(err, response){
-            if(err){
-                console.error(err);
-                callback(-1, err);
-                return;
-            }
+        dbCallbackGenerator(callback, 
+        function(response){
             if(response.length === 0){
                 console.error("No game with uuid " + gameUuid);
-                callback(-1, {error : "No game with uuid " + gameUuid);
+                callback(-1, {error : "No game with uuid " + gameUuid});
                 return;
             }
             else{
@@ -272,7 +268,7 @@ exports.addSubmission = function(args, callback){
                 var player;
                 for(var i = 0; i < players.length; ++i){
                     if(players[i].uuid === playerUuid){
-                        player = players[i].uuid;
+                        player = players[i];
                         mailbox = players[i].mailbox;
                         var nextPlayerIndex = (i + 1)%players.length;
                         nextPlayerUuid = players[nextPlayerIndex].uuid;
@@ -290,12 +286,8 @@ exports.addSubmission = function(args, callback){
                 Game.update({uuid : gameUuid,
                     "players.uuid" : playerUuid},
                     {"$pop" : {"players.$.mailbox" : -1}},
-                    function(err, response){
-                        if(err){
-                            console.error(err);
-                            callback(-1, err);
-                            return;
-                        }
+                    dbCallbackGenerator(callback,
+                    function(response){
                         console.log(response);
                         chain.submissions.push({
                             content : submission.content,
@@ -306,64 +298,58 @@ exports.addSubmission = function(args, callback){
                             playerState = PLAYER_STATES.COMPLETED;
                         }
 
-                        function updateChain(){
+                        function updateChain(updatedPlayerState){
                             //Add chain to the next player's mailbox
                             Game.update({uuid : gameUuid,
                                 "players.uuid" : nextPlayerUuid},
                                 {"$push" : {"players.$.mailbox" : chain}},
-                                function(err, response){
-                                    if(err){
-                                        console.error(err);
-                                        callback(-1, err);
+                                dbCallbackGenerator(callback,
+                                function(response){
+                                    if(response.nModified === 0){
+                                        console.error("Failed to update mailbox");
+                                        callback(-3, {error : "Failed to update mailbox"});
                                     }
                                     else{
-                                        if(response.nModified === 0){
-                                            console.error("Failed to update mailbox");
-                                            callback(-3, {error : "Failed to update mailbox"});
-                                        }
-                                        else{
-                                            callback(0, {
-                                                chainOwnerUuid : chain.ownerUuid,
-                                                chainState : chain.state,
-                                                targetPlayerUuid : nextPlayerUuid,
-                                                submission : {
-                                                    content : submission.content,
-                                                    authorUuid : playerUuid,
-                                                }}
-                                            );
-                                        }
+                                        callback(0, {
+                                            chainOwnerUuid : chain.ownerUuid,
+                                            chainState : chain.state,
+                                            targetPlayerUuid : nextPlayerUuid,
+                                            updatedPlayerState : 
+                                                updatedPlayerState ? updatedPlayerState : undefined,
+                                            submission : {
+                                                content : submission.content,
+                                                authorUuid : playerUuid,
+                                            }}
+                                        );
                                     }
-                                }
+                                })
                             );
                         };
 
                         if(player.state != playerState){
+                            console.log("Updating gamestate");
                             Game.update(
                                 {"uuid" : gameUuid, "players.uuid" : player.uuid},
-                                {"players.$.state" : playerState},
-                                function(err, response){
-                                    if(err){
-                                        console.error(err);
-                                        callback(-1, err);
-                                    }
-                                    else{
-                                        updateChain();
-                                    }
-                                }
+                                {"$set" : {"players.$.state" : playerState}},
+                                dbCallbackGenerator(callback,
+                                function(response){
+                                    console.log(response);
+                                    updateChain(playerState);
+                                })
                             );
                         }
                         else{
                             updateChain();
                         }
-                    }
+                    })
                 );
             }
-        }
+        })
     );
 };
 
 
-dbCallbackGenerator(successCallback, preconditionCallback,controllerCallback){
+function dbCallbackGenerator(controllerCallback, successCallback){
     var dbCallback = function(err, response){
         if(err){
             console.error(err);
