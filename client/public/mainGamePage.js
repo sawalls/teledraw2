@@ -9,6 +9,8 @@ app.controller("mainGamePageController", function($scope){
         
         if($scope.playerState === 2){
             $scope.clueText = "All done!";
+            $scope.showClueText = 1;
+            $scope.showClueImg = 0;
             $scope.showSubmitStuff = 0;
         }
         else if($scope.mailbox.length > 0){
@@ -20,7 +22,19 @@ app.controller("mainGamePageController", function($scope){
                 $scope.showSubmitStuff = 1;
             }
             else if($scope.playerState === 1){
-                $scope.clueText = $scope.mailbox[0].submission.content;
+                //Check if it's a picture
+                var text = $scope.mailbox[0].submission.content;
+                $scope.clueText = text;
+                var imgRegex = new RegExp("\.png$|\.jpg$|\.gif$|\.bmp", "g");
+                if(text.search(imgRegex) !== -1){
+                    //It's a picture
+                    $scope.showClueImg = 1;
+                    $scope.showClueText = 0;
+                }
+                else{
+                    $scope.showClueText = 1;
+                    $scope.showClueImg = 0;
+                }
                 $scope.showSubmitStuff = 1;
             }
         }

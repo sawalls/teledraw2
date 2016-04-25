@@ -1,6 +1,7 @@
 script(src="mainGamePage.js")
 div(ng-controller="mainGamePageController")
-        p {{clueText}}
+        p(ng-show="showClueText") {{clueText}}
+        img(ng-show="showClueImg", ng-src="{{clueText}}")
         div(ng-show="showSubmitStuff")
             | Submission #[input(ng-model="submission")]
             button(ng-click="submitBtnClickedHandler()") Submit
