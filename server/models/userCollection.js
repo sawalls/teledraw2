@@ -27,13 +27,14 @@ exports.addUser = function(args, callback)
         User.find({"$or" : [{"usernameLower" : username.toLowerCase()},
                             {"emailLower" : args.email.toLowerCase()}]}).
             exec(function(err, users){
+            var playerUuid = uuid.v1();
             if(users.length === 0){
                 var userData = 
                 {
                     "username": username,
                     "usernameLower" : username.toLowerCase(),
                     "password": hash,
-                    "uuid" : uuid.v1(),
+                    "uuid" : playerUuid,
                     "email" : args.email,
                     "emailLower" : args.email.toLowerCase(),
                     "createDate" : new Date(),
@@ -47,7 +48,7 @@ exports.addUser = function(args, callback)
                         return;
                     }
                     else{
-                        callback(0);
+                        callback(0, {playerUuid : playerUuid});
                         return;
                     }
                 });

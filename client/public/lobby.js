@@ -24,6 +24,9 @@ app.controller("lobbyController", function($scope){
     socket.on("playerJoined", function(data){
         console.log("playerJoined");
         console.log(data);
+        if(data.uuid === $scope.playerUuid){
+            return;
+        }
         $scope.$apply(function(){
             $scope.players.push(data);
         });

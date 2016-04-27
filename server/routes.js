@@ -48,7 +48,8 @@ module.exports = function(app, io)
                 }
                 else{
                     console.log("createAcctSuccessful");
-                    socket.emit("createAcctSuccessful", {username : data.username});
+                    socket.emit("createAcctSuccessful", {username : data.username,
+                        uuid : response.playerUuid});
                 }
             });
         });
@@ -163,8 +164,39 @@ module.exports = function(app, io)
                         socket.emit("getGameInfoError", response);
                     }
                     else{
-                        console.log(response);
-                        socket.emit("getGameInfoSuccessful", response);
+                        //Package data nicely
+                        var gameData = {
+                            gameUuid : response.uuid,
+                            gameState : response.gameState,
+                            creatorUuid : response.creatorUuid,
+                            creatorUsername : response.creatorUsername,
+                            players : [],
+                            mailbox : [],
+                        };
+                        for(var i = 0; i < response.players.length; ++i){
+                            gameData.players.push({
+                                uuid : response.players[i].uuid,
+                                username : response.players[i].username,
+                            });
+                            if(response.players[i].uuid === data.playerUuid){
+                                console.log("Found the player");
+                                var mailbox = response.players[i].mailbox;
+                                gameData.playerState = response.players[i].state;
+                                for(var j = 0; j < mailbox.length; ++j){
+                                    var chainInfo = {
+                                        chainOwnerUuid : mailbox[j].ownerUuid,
+                                        chainState : mailbox[j].state,
+                                    };
+                                    if(mailbox[j].submissions.length > 0){
+                                        chainInfo.submission = mailbox[j].submissions[mailbox[j].submissions.length - 1];
+                                    }
+                                    gameData.mailbox.push(chainInfo);
+                                }
+                            }
+                        }
+                        console.log(gameData);
+                        socket.join(data.gameUuid);
+                        socket.emit("getGameInfoSuccessful", gameData);
                     }
                 }
             );
@@ -194,7 +226,24 @@ module.exports = function(app, io)
 
         });
 
-
+        socket.on("submission", function(data){
+            console.log("submission");
+            console.log(data);
+            gameCollection.addSubmission(data,
+                function(rc, response){
+                    if(rc){
+                        console.error(response);
+                        socket.emit("serverFailure");
+                    }
+                    else{
+                        console.log("emitting receivedSubmission");
+                        io.to(data.gameUuid).emit("receivedSubmission", response);
+                        if(response.updatedPlayerState){
+                            socket.emit("updatedPlayerState", {playerState: response.updatedPlayerState});
+                        }
+                    }
+                }
+            );
+        });
     });
-
 }
