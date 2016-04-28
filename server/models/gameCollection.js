@@ -39,9 +39,9 @@ const PLAYER_STATES = {
 };
 
 const GAMESTATES = {
-    GAME_NOT_STARTED : 0,
-    GAME_STARTED : 1,
-    GAME_COMPLETE : 2,
+    NOT_STARTED : 0,
+    IN_PROGRESS : 1,
+    COMPLETED : 2,
 };
 
 var Game = mongoose.model("Game", GameSchema);
@@ -78,7 +78,7 @@ exports.addGame = function(args, callback)
         creatorUuid : creatorUuid,
         creatorUsername : creatorUsername,
         createDate : new Date(),
-        gameState : GAMESTATES.GAME_NOT_STARTED,
+        gameState : GAMESTATES.NOT_STARTED,
     };
 
     if(args.password === undefined){
@@ -172,7 +172,7 @@ exports.addPlayerToGame = function(args, callback){
 
 exports.findOpenGames = function(args, callback){
     Game.find({
-        gameState : GAMESTATES.GAME_NOT_STARTED,
+        gameState : GAMESTATES.NOT_STARTED,
     },
     {gameName : 1, uuid : 1, password : 1},
     function(err, response){
@@ -234,7 +234,7 @@ exports.findGameForPlayer = function(args, callback){
 exports.startGame = function(args, callback){
     console.log(args);
     Game.update({uuid : args.uuid},
-        {gameState : GAMESTATES.GAME_STARTED},
+        {gameState : GAMESTATES.IN_PROGRESS},
         function(err, response){
             if(err){
                 callback(-1, err);
@@ -263,16 +263,23 @@ exports.addSubmission = function(args, callback){
                 var game = response[0];
                 var players = game.players;
                 //Find the player and the next player
+                //And count the number of completed chains
                 var mailbox;
                 var nextPlayerUuid;
                 var player;
+                var numCompletedChains = 0;
                 for(var i = 0; i < players.length; ++i){
                     if(players[i].uuid === playerUuid){
                         player = players[i];
                         mailbox = players[i].mailbox;
                         var nextPlayerIndex = (i + 1)%players.length;
                         nextPlayerUuid = players[nextPlayerIndex].uuid;
-                        break;
+                    }
+                    for(var j = 0; j < players[i].mailbox.length; ++j)
+                    {
+                        if(players[i].mailbox[j].submissions.length === players.length){
+                            numCompletedChains += 1;
+                        }
                     }
                 }
                 if(!mailbox){
@@ -327,10 +334,17 @@ exports.addSubmission = function(args, callback){
                         };
 
                         if(player.state != playerState){
+                            var updateObj = {"$set" : {"players.$.state" : playerState}};
+                            if(playerState === PLAYER_STATES.COMPLETED
+                                    && numCompletedChains === (players.length - 1)){
+                                //The final chain was completed
+                                updateObj = {"$set" : {"players.$.state" : playerState, 
+                                    "gameState" : GAMESTATES.COMPLETED}}
+                            }
                             console.log("Updating gamestate");
                             Game.update(
                                 {"uuid" : gameUuid, "players.uuid" : player.uuid},
-                                {"$set" : {"players.$.state" : playerState}},
+                                updateObj,
                                 dbCallbackGenerator(callback,
                                 function(response){
                                     console.log(response);
@@ -345,6 +359,18 @@ exports.addSubmission = function(args, callback){
                 );
             }
         })
+    );
+};
+
+exports.findFinishedGamesForPlayer = function(args, callback){
+    var playerUuid = args.playerUuid;
+    Game.find({"gameState" : GAMESTATES.COMPLETED, "players.uuid" : playerUuid},
+        dbCallbackGenerator(callback,
+            function(response){
+                console.log(response);
+                callback(0, response);
+            }
+        )
     );
 };
 
