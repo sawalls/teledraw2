@@ -245,5 +245,46 @@ module.exports = function(app, io)
                 }
             );
         });
+
+        socket.on("getFinishedGames", function(data){
+            console.log("getFinishedGames");
+            console.log(data);
+            gameCollection.findFinishedGamesForPlayer({playerUuid : data.playerUuid},
+                function(rc, response){
+                    if(rc){
+                        console.log(response)
+                            socket.emit("serverFailure");
+                    }
+                    else{
+                        socket.emit("finishedGames", {gameList : response});
+                    }
+                }
+            );
+        });
+
+        socket.on("getRevealInfo", function(data){
+            var gameUuid = data.gameUuid;
+            var playerUuid = data.playerUuid;
+            console.log("getRevealInfo");
+            console.log(data);
+            gameCollection.findGameForPlayer(
+                {gameUuid : gameUuid, playerUuid : playerUuid},
+                function(rc, response){
+                    if(rc){
+                        console.error(response);
+                        socket.emit("serverFailure");
+                    }
+                    else{
+                        console.log(response);
+                        //Package response
+                        retObj = {
+                            players : response.players,
+                        }
+                        socket.emit("revealInfo", retObj);
+                    }
+                }
+            )
+        });
+
     });
 }

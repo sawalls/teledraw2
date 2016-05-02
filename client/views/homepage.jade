@@ -10,3 +10,8 @@ div(ng-controller="homepageController")
         include ./joinGame.jade
     div(ng-show="showGame")
         include ./game.jade
+    div(ng-show="showFinishedGames")
+        include ./finishedGames.jade
+    div(ng-show="showReveal")
+        include ./reveal.jade
+

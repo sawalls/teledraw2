@@ -189,7 +189,7 @@ exports.findCurrentGames = function(args, callback){
     Game.find({
         "players" : {"$elemMatch" :  {"uuid" : args.playerUuid}}
     },
-    {gameName : 1, uuid : 1},
+    {gameName : 1, uuid : 1, creatorUsername : 1},
     function(err, response){
         if(err){
             callback(-1, err);
@@ -365,6 +365,7 @@ exports.addSubmission = function(args, callback){
 exports.findFinishedGamesForPlayer = function(args, callback){
     var playerUuid = args.playerUuid;
     Game.find({"gameState" : GAMESTATES.COMPLETED, "players.uuid" : playerUuid},
+        {"gameName" : 1, "uuid" : 1, "creatorUsername" : 1},
         dbCallbackGenerator(callback,
             function(response){
                 console.log(response);
