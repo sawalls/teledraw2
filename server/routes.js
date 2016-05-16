@@ -1,6 +1,8 @@
 var userCollection = require("./models/userCollection.js");
 var gameCollection = require("./models/gameCollection.js");
 
+var revealSessions = {};
+
 module.exports = function(app, io)
 {
     app.get("/", function(req, res){
@@ -286,5 +288,91 @@ module.exports = function(app, io)
             )
         });
 
+        function getRevealRoomName(gameUuid){
+            return gameUuid + "_reveal";
+        };
+
+        socket.on("joinRevealSession", function(data){
+            console.log("joinRevealSession");
+            var revealGameUuid = data.gameUuid;
+            var roomName = getRevealRoomName(data.gameUuid);
+            if(revealSessions[revealGameUuid] === undefined){
+                var players = [
+                    {
+                        playerUuid : data.playerUuid,
+                        username : data.username,
+                        isLeader : true,
+                    }
+                ];
+                revealSessions[revealGameUuid] = {
+                    sessionStartDate : new Date(),
+                    roomName : roomName,
+                    players : players,
+                };
+                socket.join(roomName);
+                console.log("emitting createdRevealSession");
+                console.log(players);
+                socket.emit("createdRevealSession", {players: players});
+            }
+            else{
+                //check if the player is already in the session
+                var players = revealSessions[revealGameUuid].players;
+                var i = 0;
+                for(; i < players.length; ++i){
+                    if(players[i].playerUuid === data.playerUuid){
+                        break;
+                    }
+                }
+                if(i >= players.length){
+                    revealSessions[revealGameUuid].players.push({playerUuid : data.playerUuid, username : data.username});
+                    io.to(roomName).emit("playerJoinedRevealSession", {playerUuid : data.playerUuid, username: data.username});
+                }
+                console.log("emitting groupRevealInfo");
+                console.log(players);
+                socket.emit("groupRevealInfo", {
+                    players : revealSessions[revealGameUuid].players,
+                });
+                socket.join(roomName);
+                if(revealSessions[revealGameUuid].currentSubmission){
+                    socket.emit("currentRevealSubmission", 
+                        revealSessions[revealGameUuid].currentSubmission);
+                }
+            }
+        });
+
+        socket.on("startGroupReveal", function(data){
+            console.log("startGroupReveal");
+            console.log(data);
+            //Return the first element of the reveal
+            var revealSession = revealSessions[data.gameUuid];
+            if(!revealSession){
+                socket.emit("serverFailure");
+                return;
+            }
+            //Get game info
+            gameCollection.findFinishedGameInfo({gameUuid : data.gameUuid},
+                function(rc, response){
+                    if(rc){
+                        socket.emit("serverFailure");
+                        return;
+                    }
+                    socket.emit("gameRevealInfo", response);
+                }
+            );
+        });
+
+        socket.on("updateRevealSession", function(data){
+            console.log("updateRevealSession");
+            console.log(data);
+            if(!revealSessions[data.gameUuid]){
+                console.error("No such reveal session" + data.gameUuid);
+                socket.emit("serverFailure");
+                return;
+            }
+            else{
+                revealSessions[data.gameUuid].currentSubmission = data.submission;
+                io.to(getRevealRoomName(data.gameUuid)).emit("revealUpdated", {submission : data.submission});
+            }
+        });
     });
 }

@@ -56,6 +56,20 @@ angular.module("teledraw").controller("homepageController", function($scope){
         });
     });
 
+    function navigateToGroupReveal(data){
+        hideAll();
+        $scope.$broadcast("getGroupRevealInfo", data);
+        $scope.showGroupReveal = 1;
+    };
+
+    $scope.$on("joinRevealSession", function(event, data){
+        console.log("Got signal joinRevealSession");
+        navigateToGroupReveal({
+            gameName : data.gameName,
+            gameUuid : data.uuid,
+        });
+    });
+
     $scope.$on("joinGameSuccessful", function(event, data){
         console.log("Got signal joinGameSuccessful");
         navigateToGame({

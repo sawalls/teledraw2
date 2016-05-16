@@ -3,10 +3,16 @@ console.log("Loaded finishedGames.js");
 angular.module("teledraw").controller("finishedGamesController", function($scope){
     console.log("In finishedGamesController");
 
-    $scope.rowClickedHandler = function(game){
-        console.log("rowClickedHandler");
+    $scope.soloRevealBtnClickedHandler = function(game){
+        console.log("soloRevealBtnClickedHandler");
         console.log(game);
         $scope.$emit("openReveal", game);
+    };
+
+    $scope.groupRevealBtnClickedHandler = function(game){
+        console.log("groupRevealBtnClickedHandler");
+        console.log(game);
+        $scope.$emit("joinRevealSession", game);
     };
 
     $scope.$on("userLoggedIn", function(){

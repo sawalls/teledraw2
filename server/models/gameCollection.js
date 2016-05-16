@@ -375,6 +375,22 @@ exports.findFinishedGamesForPlayer = function(args, callback){
     );
 };
 
+exports.findFinishedGameInfo = function(args, callback){
+    Game.find({"gameState" : GAMESTATES.COMPLETED,
+        "uuid" : args.gameUuid}, {"players" : 1},
+        dbCallbackGenerator(callback,
+            function(response){
+                if(response.length === 0){
+                    callback(1, {error : "No such completed game"});
+                    return;
+                }
+                callback(0, response[0]);
+                return;
+            }
+        )
+    );
+};
+
 
 function dbCallbackGenerator(controllerCallback, successCallback){
     var dbCallback = function(err, response){
