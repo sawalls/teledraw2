@@ -9,6 +9,7 @@ div(ng-controller="revealController")
     div(ng-show="showSubmissions")
         p(ng-show="showTextSubmission") {{submissionText}}
         img(ng-show="showImgSubmission", ng-src="{{submissionImgSrc}}")
-        button(ng-show="currentSubmissionIndex <= currentChain.submissions.length", \
+        button(ng-show="currentSubmissionIndex < currentChain.submissions.length - 1", \
             ng-click="nextSubmissionBtnClickedHandler()") Next Submission
-
+        button(ng-show="currentSubmissionIndex >= currentChain.submissions.length - 1", \
+            ng-click="backToReveal()") Back to Reveal

@@ -64,4 +64,14 @@ angular.module("teledraw").controller("revealController", function($scope){
 
         }
     };
+
+    $scope.backToReveal = function(){
+        console.log("backToReveal");
+        hideAll();
+        $scope.showPlayerTable = 1;
+        $scope.currentChain = undefined;
+        $scope.currentPlayerName = undefined;
+        $scope.currentSubmissionIndex = 0;
+        $scope.submissionText = undefined;
+    };
 });
