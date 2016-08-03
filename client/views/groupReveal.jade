@@ -1,0 +1,26 @@
+script(src="groupReveal.js")
+div(ng-controller="groupRevealController")
+    p Group Reveal
+    table
+        tr(ng-repeat="player in players")
+            td {{player.username}}
+    button(ng-show="isRevealLeader && !revealStarted", \
+        ng-click="startRevealBtnClickedHandler()") Start Reveal
+
+    div(ng-show="showGamePlayersTable")
+        table        
+            tr
+                th Player Name
+            tr(ng-repeat="player in gamePlayers")
+                td {{ player.username }}
+                    button(ng-click="showChainBtnClickedHandler(player)") Show Chain
+            
+    div(ng-show="showSubmission")
+        p Chain Owner: {{ chainOwnerName }}
+        p Author: {{ authorName }}
+        p(ng-show="showTextSubmission") {{submissionText}}
+        img(ng-show="showImgSubmission", ng-src="{{submissionImgSrc}}")
+        button(ng-show="isRevealLeader && (submissionIndex < currentChain.submissions.length - 1)", \
+            ng-click="nextSubmissionBtnClickedHandler()") Next Submission
+
+        

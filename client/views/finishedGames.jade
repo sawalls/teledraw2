@@ -1,0 +1,16 @@
+script(src="finishedGames.js")
+div(ng-controller="finishedGamesController")
+    p Finished Games
+    p(ng-show="showError") {{finishedGamesErrorMsg}}
+    table
+        tr
+            th Game Name
+            th Creator
+        tr(ng-repeat="game in gameList")
+            td {{game.gameName}}
+            td {{game.creatorUsername}}
+            td
+                button(ng-click="soloRevealBtnClickedHandler(game)") Solo Reveal
+            td
+                button(ng-click="groupRevealBtnClickedHandler(game)") Group Reveal
+

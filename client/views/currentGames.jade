@@ -8,4 +8,5 @@ div(ng-controller="currentGamesController")
             th Creator
         tr(ng-repeat="game in gameList", ng-click="rowClickedHandler(game)")
             td {{game.gameName}}
+            td {{game.creatorUsername}}
 
