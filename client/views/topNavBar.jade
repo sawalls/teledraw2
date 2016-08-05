@@ -1,0 +1,16 @@
+script(src="topNavBar.js")
+div(ng-controller="topNavBarController")
+    nav.navbar.navbar-default
+        .container-fluid
+            .navbar-header
+                p.navbar-brand Teledraw!
+            ul.nav.navbar-nav
+                li
+                    p {{username}}
+                li
+                    p Hello!
+                li
+                    p 12345
+                li
+                    button.navbar-btn(ng-click="logoutClickedHandler()") Logout
+        
