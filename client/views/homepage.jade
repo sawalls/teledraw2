@@ -1,8 +1,11 @@
 script(src="homepage.js")
 div(ng-controller="homepageController")
+    div
+        include ./topNavBar.jade
     p Welcome {{username}}
     div(ng-show="showCurrentGames")
         include ./currentGames.jade
+        button(ng-click="showCreateGameHandler()") Create Game
     div(ng-show="showCreateGame")
         include ./createGame.jade
     br
