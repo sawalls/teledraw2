@@ -14,36 +14,15 @@ h1 {
 .navbar-default{
     background-color : #CCFFC4;
 }
-/*
-ul{
-    list-style-type : none;
-    margin : 0;
-    padding : 0;
-    overflow : hidden;
+
+.table-nonfluid {
+    width : auto !important;
 }
 
-li{
-    float : left;
+.row {
+    margin-left : 3px;
 }
 
-p{
-    display : block;
+.nav-text {
+    line-height : 210%;
 }
-
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-li {
-    float: left;
-}
-
-li p {
-    display: block;
-    padding: 8px;
-    background-color: #dddddd;
-}
-*/

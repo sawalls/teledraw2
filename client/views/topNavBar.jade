@@ -4,13 +4,15 @@ div(ng-controller="topNavBarController")
         .container-fluid
             .navbar-header
                 p.navbar-brand Teledraw!
-            ul.nav.navbar-nav
+            ul.nav.navbar-nav.navbar-right
                 li
-                    p {{username}}
+                    p.nav-text {{username}}
                 li
-                    p Hello!
+                    button.navbar-btn(ng-click="currentGamesClickedHandler()") Current Games
                 li
-                    p 12345
+                    button.navbar-btn(ng-click="createGameClickedHandler()") Create Game 
+                li
+                    button.navbar-btn(ng-click="gameLogClickedHandler()") Game Log
                 li
                     button.navbar-btn(ng-click="logoutClickedHandler()") Logout
         

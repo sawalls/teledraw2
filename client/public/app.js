@@ -56,5 +56,17 @@ app.controller("appController", function($scope){
     });
 
     $scope.showLogin = 1;
+
+    $scope.$on("logout", function(event, data){
+        console.log("App got logout");
+        $scope.username = undefined;
+        $scope.playerUuid = undefined;
+        $scope.showLogin = 1;
+        $scope.showHomepage = 0;
+        $scope.showCreateAcct = 0;
+        //Send socket or GET to delete session info
+        socket.emit("logout", {});
+    });
+
 });
 

@@ -4,9 +4,9 @@ angular.module("teledraw").controller("homepageController", function($scope){
     console.log("Loaded homepageController");
 
     $scope.showCurrentGames = 1;
-    $scope.showCreateGame = 1;
-    $scope.showJoinGame = 1;
-    $scope.showFinishedGames = 1;
+    $scope.showCreateGame = 0;
+    $scope.showJoinGame = 0;
+    $scope.showFinishedGames = 0;
 
     function hideAll(){
         $scope.showCurrentGames = 0;
@@ -78,4 +78,21 @@ angular.module("teledraw").controller("homepageController", function($scope){
         });
     });
 
+    $scope.$on("showCurrentGames", function(event, data){
+        hideAll();
+        $scope.showCurrentGames = 1;
+    });
+    $scope.$on("showCreateGame", function(event, data){
+        hideAll();
+        $scope.showCreateGame = 1;
+    });
+    $scope.$on("showGameLog", function(event, data){
+        hideAll();
+        $scope.showFinishedGames = 1;
+    });
+
+    $scope.showCreateGameHandler = function(){
+        hideAll();
+        $scope.showCreateGame = 1;
+    }
 });

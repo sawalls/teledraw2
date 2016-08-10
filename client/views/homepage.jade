@@ -5,6 +5,7 @@ div(ng-controller="homepageController")
     p Welcome {{username}}
     div(ng-show="showCurrentGames")
         include ./currentGames.jade
+        button(ng-click="showCreateGameHandler()") Create Game
     div(ng-show="showCreateGame")
         include ./createGame.jade
     br
