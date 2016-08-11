@@ -3,5 +3,9 @@ div(ng-controller="mainGamePageController")
         p(ng-show="showClueText") {{clueText}}
         img(ng-show="showClueImg", ng-src="{{clueText}}")
         div(ng-show="showSubmitStuff")
-            | Submission #[input(ng-model="submission")]
-            button(ng-click="submitBtnClickedHandler()") Submit
+            div(ng-show="showClueText")
+                input#fileInput(type="file")
+                button(ng-click="submitImgBtnClickedHandler()") Submit
+            div(ng-show="showClueImg")
+                | Submission #[input(ng-model="submission")]
+                button(ng-click="submitBtnClickedHandler()") Submit

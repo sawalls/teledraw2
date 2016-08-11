@@ -1,7 +1,15 @@
 var userCollection = require("./models/userCollection.js");
 var gameCollection = require("./models/gameCollection.js");
+var nodeUuid = require("node-uuid");
+var aws = require("aws-sdk");
 
 var revealSessions = {};
+
+var s3 = new aws.S3();
+
+const S3_BUCKET = process.env.S3_BUCKET;
+const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 
 module.exports = function(app, io)
 {
@@ -373,6 +381,35 @@ module.exports = function(app, io)
                 revealSessions[data.gameUuid].currentSubmission = data.submission;
                 io.to(getRevealRoomName(data.gameUuid)).emit("revealUpdated", {submission : data.submission});
             }
+        });
+
+        socket.on("getS3SignedRequest", function(data){
+            console.log("getS3SignedRequest");
+            var uuid = nodeUuid.v1();
+            var fileName = data.fileName;
+            var fileType = data.fileType;
+            const s3Params = {
+                Bucket: S3_BUCKET,
+                Key: uuid,
+                Expires: 60,
+                ContentType: fileType,
+                ACL: 'public-read'
+            };
+            s3.getSignedUrl('putObject', s3Params, (err, reqUrl) => {
+                if(err){
+                    console.log(err);
+                    socket.emit("serverFailure");
+                    return;
+                }
+                var url = "https://" + S3_BUCKET + 
+                    ".s3.amazonaws.com/" +
+                    uuid;
+                const returnData = {
+                    signedRequest: reqUrl,
+                    url: url,
+                };
+                socket.emit("signedRequest", returnData);
+            });
         });
     });
 }

@@ -20,6 +20,7 @@ app.controller("mainGamePageController", function($scope){
                 //It's the first submission
                 $scope.clueText = "Choose a word or phrase!";
                 $scope.showSubmitStuff = 1;
+                $scope.showClueText = 1;
             }
             else if($scope.playerState === 1){
                 //Check if it's a picture
@@ -73,6 +74,21 @@ app.controller("mainGamePageController", function($scope){
         updateClueText();
     };
 
+    $scope.submitImgBtnClickedHandler = function(){
+        console.log("submitImgBtnClickedHandler");
+        var files = document.getElementById("fileInput").files;
+        var file = files[0];
+        console.log(file.name);
+        if(!file){
+            alert("No file selected");
+            return;
+        }
+        socket.emit("getS3SignedRequest", {
+            fileName : file.name,
+            fileType : file.type,
+        });
+    }
+
     socket.on("receivedSubmission", function(data){
         console.log("receivedSubmission");
         console.log(data);
@@ -89,6 +105,10 @@ app.controller("mainGamePageController", function($scope){
                 }
             });
         }
+    });
+
+    socket.on("signedRequest",function(data){
+        console.log(data.url);
     });
 
     socket.on("updatedPlayerState", function(data){
