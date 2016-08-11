@@ -109,6 +109,25 @@ app.controller("mainGamePageController", function($scope){
 
     socket.on("signedRequest",function(data){
         console.log(data.url);
+        var files = document.getElementById("fileInput").files;
+        var file = files[0];
+        const xhr = new XMLHttpRequest();
+          xhr.open('PUT', data.signedRequest);
+          xhr.onreadystatechange = () => {
+            if(xhr.readyState === 4){
+              if(xhr.status === 200){
+                  alert("Success!");
+                  /*
+                  $scope.submission = data.url;
+                  $scope.submitBtnClickedHandler();
+                  */
+              }
+              else{
+                alert('Could not upload file.');
+              }
+            }
+        };
+        xhr.send(file);
     });
 
     socket.on("updatedPlayerState", function(data){
