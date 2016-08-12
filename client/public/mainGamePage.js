@@ -12,17 +12,18 @@ app.controller("mainGamePageController", function($scope){
             $scope.showClueText = 1;
             $scope.showClueImg = 0;
             $scope.showSubmitStuff = 0;
+            $scope.isFirstSub = 0;
         }
         else if($scope.mailbox.length > 0){
             console.log($scope.mailbox[0]);
             var state = $scope.mailbox[0].chainState;
             if($scope.playerState === 0){
                 //It's the first submission
-                $scope.clueText = "Choose a word or phrase!";
                 $scope.showSubmitStuff = 1;
-                $scope.showClueText = 1;
+                $scope.isFirstSub = 1;
             }
             else if($scope.playerState === 1){
+                $scope.isFirstSub = 0;
                 //Check if it's a picture
                 var text = $scope.mailbox[0].submission.content;
                 $scope.clueText = text;
@@ -40,8 +41,9 @@ app.controller("mainGamePageController", function($scope){
             }
         }
         else{
-            $scope.clueText = "Please wait for your next clue!";
+            console.log("No clues!");
             $scope.showSubmitStuff = 0;
+            $scope.isFirstSub = 0;
         }
     };
 
@@ -55,16 +57,14 @@ app.controller("mainGamePageController", function($scope){
     });
 
 
-    $scope.submitBtnClickedHandler = function(){
-        console.log("submitBtnClickedHandler");
-        if($scope.submission === ""){
-            return;
-        }
+    function submitToDB(submission){
+        console.log("submitToDB");
+        console.log(submission);
         var subData = {
             gameUuid : $scope.gameUuid,
             playerUuid : $scope.playerUuid,
             submission : {
-                content : $scope.submission
+                content : submission
             },
         };
         console.log(subData);
@@ -72,6 +72,13 @@ app.controller("mainGamePageController", function($scope){
         var chain = $scope.mailbox.shift();
         socket.emit("submission", subData);
         updateClueText();
+    }
+
+    $scope.submitBtnClickedHandler = function(){
+        if($scope.submission === ""){
+            return;
+        }
+        submitToDB($scope.submission);
     };
 
     $scope.submitImgBtnClickedHandler = function(){
@@ -112,19 +119,19 @@ app.controller("mainGamePageController", function($scope){
         var files = document.getElementById("fileInput").files;
         var file = files[0];
         const xhr = new XMLHttpRequest();
-          xhr.open('PUT', data.signedRequest);
-          xhr.onreadystatechange = () => {
+        xhr.open('PUT', data.signedRequest);
+        xhr.onreadystatechange = () => {
             if(xhr.readyState === 4){
-              if(xhr.status === 200){
-                  alert("Success!");
-                  /*
-                  $scope.submission = data.url;
-                  $scope.submitBtnClickedHandler();
-                  */
-              }
-              else{
-                alert('Could not upload file.');
-              }
+                if(xhr.status === 200){
+                    alert("Success!");
+                    $scope.$apply(function(){
+                        submitToDB(data.url)
+                    });
+                    return;
+                }
+                else{
+                    alert('Could not upload file.');
+                }
             }
         };
         xhr.send(file);
@@ -138,4 +145,15 @@ app.controller("mainGamePageController", function($scope){
             updateClueText();
         });
     });
+
+    $scope.LOG = function(){
+        console.log("MAILBOX");
+        console.log($scope.mailbox.length);
+        for(var i = 0; i < $scope.mailbox.length; ++i){
+            console.log($scope.mailbox[i].submission.content);
+        }
+        console.log("showSubmitStuff");
+        console.log($scope.showSubmitStuff);
+    }
+
 });

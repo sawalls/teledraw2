@@ -379,7 +379,8 @@ module.exports = function(app, io)
             }
             else{
                 revealSessions[data.gameUuid].currentSubmission = data.submission;
-                io.to(getRevealRoomName(data.gameUuid)).emit("revealUpdated", {submission : data.submission});
+                io.to(getRevealRoomName(data.gameUuid)).
+                    emit("revealUpdated", {submission : data.submission});
             }
         });
 
@@ -387,10 +388,13 @@ module.exports = function(app, io)
             console.log("getS3SignedRequest");
             var uuid = nodeUuid.v1();
             var fileName = data.fileName;
+            //get file extension
+            var extn = fileName.substring(fileName.lastIndexOf("."));
+            var key = uuid + extn;
             var fileType = data.fileType;
             const s3Params = {
                 Bucket: S3_BUCKET,
-                Key: uuid,
+                Key: key,
                 Expires: 60,
                 ContentType: fileType,
                 ACL: 'public-read'
@@ -403,7 +407,7 @@ module.exports = function(app, io)
                 }
                 var url = "https://" + S3_BUCKET + 
                     ".s3.amazonaws.com/" +
-                    uuid;
+                    key;
                 const returnData = {
                     signedRequest: reqUrl,
                     url: url,
