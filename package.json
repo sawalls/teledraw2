@@ -27,6 +27,7 @@
       "socket.io" : "latest",
       "mongoose" : "latest",
       "password-hash-and-salt" : "latest",
-      "node-uuid" : "latest"
+      "node-uuid" : "latest",
+      "aws-sdk" : "latest"
   }
 }

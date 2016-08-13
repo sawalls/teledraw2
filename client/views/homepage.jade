@@ -6,11 +6,10 @@ div(ng-controller="homepageController")
     div(ng-show="showCurrentGames")
         include ./currentGames.jade
         button(ng-click="showCreateGameHandler()") Create Game
-    div(ng-show="showCreateGame")
-        include ./createGame.jade
-    br
     div(ng-show="showJoinGame")
         include ./joinGame.jade
+    div(ng-show="showCreateGame")
+        include ./createGame.jade
     div(ng-show="showGame")
         include ./game.jade
     div(ng-show="showFinishedGames")
