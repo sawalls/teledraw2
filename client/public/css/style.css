@@ -26,3 +26,7 @@ h1 {
 .nav-text {
     line-height : 210%;
 }
+
+.grayBackground{
+    background-color : #F4F6F6;
+}
