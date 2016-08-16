@@ -9,6 +9,8 @@ app.controller("drawCanvasController", function($scope){
 
     drawCtx.fillStyle = "white";
     drawCtx.fillRect(0,0, drawCtx.canvas.width, drawCtx.canvas.height);
+    drawCtx.strokeStyle = "#000000";
+    $scope.selectedColor = "#000000";
 
     var paint = false;
 
@@ -18,7 +20,12 @@ app.controller("drawCanvasController", function($scope){
 
     function addClick(mouseX, mouseY, dragging){
         if(!dragging){//new Segment
-            clickDrag.push(clickX.length);
+            clickDrag.push(
+                {
+                    clickIndex : clickX.length,
+                    color : $scope.selectedColor,
+                }
+            );
         }
         clickX.push(mouseX);
         clickY.push(mouseY);
@@ -30,14 +37,15 @@ app.controller("drawCanvasController", function($scope){
         drawCtx.fillStyle = "white";
         drawCtx.fillRect(0,0, drawCtx.canvas.width, drawCtx.canvas.height);
 
-        drawCtx.strokeStyle = "#df4b26";
         drawCtx.lineJoin = "round";
         drawCtx.lineWidth = 5;
 
         var segIndex = 0;
         for(var i = 0; i < clickX.length; ++i){
             drawCtx.beginPath();
-            if(i === clickDrag[segIndex]){//Beginning of a segment
+            if(segIndex < clickDrag.length && 
+                    i === clickDrag[segIndex].clickIndex){//Beginning of a segment
+                drawCtx.strokeStyle = clickDrag[segIndex].color;
                 drawCtx.moveTo(clickX[i]-1,clickY[i]);
                 segIndex++;
             }
@@ -98,6 +106,8 @@ app.controller("drawCanvasController", function($scope){
         }
         var hexString = "#" + get2digHex(R) + get2digHex(G) + get2digHex(B);
         console.log(hexString);
+        $scope.selectedColor = hexString;
+        drawCtx.strokeStyle = hexString;
     };
 });
 
