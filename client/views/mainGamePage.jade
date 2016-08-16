@@ -8,6 +8,7 @@ div(ng-controller="mainGamePageController")
         div(ng-show="showClueText && !isFirstSub")
             input#fileInput(type="file")
             button(ng-click="submitImgBtnClickedHandler()") Submit
+            include ./drawCanvas.jade 
         div(ng-show="showClueImg || isFirstSub")
             | Submission #[input(ng-model="submission")]
             button(ng-click="submitBtnClickedHandler()") Submit
