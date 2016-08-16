@@ -1,3 +1,10 @@
 script(src="drawCanvas.js")
 div(ng-controller="drawCanvasController")
+    #colorPicker
+        canvas#colorPalette(width=234, height=199, ng-click="paletteClickedHandler($event)")
+        p Selected Color:
+        canvas#colorSelection(width=50,height=40)
+        #hex
+            input(type="text")
+        
     canvas#drawCanvas(height="400", width="600")
