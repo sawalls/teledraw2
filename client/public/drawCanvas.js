@@ -1,7 +1,7 @@
 console.log("LOADED drawCanvas.js");
 var drawCtx;
 var palette = new Image();
-palette.src = "img_colormap.gif";
+palette.src = "colormap.gif";
 
 app.controller("drawCanvasController", function($scope){
     console.log("Loaded drawCanvasController");
