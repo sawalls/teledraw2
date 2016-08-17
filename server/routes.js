@@ -236,9 +236,7 @@ module.exports = function(app, io)
 
         });
 
-        socket.on("submission", function(data){
-            console.log("submission");
-            console.log(data);
+        function addSubmission(data){
             gameCollection.addSubmission(data,
                 function(rc, response){
                     if(rc){
@@ -247,6 +245,7 @@ module.exports = function(app, io)
                     }
                     else{
                         console.log("emitting receivedSubmission");
+                        socket.emit("submissionSuccessful", {});
                         io.to(data.gameUuid).emit("receivedSubmission", response);
                         if(response.updatedPlayerState){
                             socket.emit("updatedPlayerState", {playerState: response.updatedPlayerState});
@@ -254,7 +253,82 @@ module.exports = function(app, io)
                     }
                 }
             );
+        }
+
+        socket.on("submission", function(data){
+            console.log("submission");
+            console.log(data);
+            addSubmission(data);
         });
+
+        socket.on("getS3SignedRequest", function(data){
+            console.log("getS3SignedRequest");
+            var uuid = nodeUuid.v1();
+            var fileName = data.fileName;
+            //get file extension
+            var extn = fileName.substring(fileName.lastIndexOf("."));
+            var key = uuid + extn;
+            var fileType = data.fileType;
+            const s3Params = {
+                Bucket: S3_BUCKET,
+                Key: key,
+                Expires: 60,
+                ContentType: fileType,
+                ACL: 'public-read'
+            };
+            s3.getSignedUrl('putObject', s3Params, (err, reqUrl) => {
+                if(err){
+                    console.log(err);
+                    socket.emit("serverFailure");
+                    return;
+                }
+                var url = "https://" + S3_BUCKET + 
+                    ".s3.amazonaws.com/" +
+                    key;
+                const returnData = {
+                    signedRequest: reqUrl,
+                    url: url,
+                };
+                socket.emit("signedRequest", returnData);
+            });
+        });
+
+        socket.on("uploadCanvasImg", function(data){
+            var uuid = nodeUuid.v1();
+            var key = uuid + ".png";
+            buf = new Buffer(data.dataUrl.replace(/^data:image\/\w+;base64,/, ""),'base64')
+                var s3data = {
+                    Bucket : S3_BUCKET,
+                    Key: key, 
+                    Body: buf,
+                    ContentEncoding: 'base64',
+                    ContentType: 'image/png'
+                };
+            s3.putObject(s3data, function(err, retData){
+                if (err) { 
+                    console.log(err);
+                    console.log('Error uploading data: ', retData); 
+                } else {
+                    console.log('succesfully uploaded the image!');
+                    if(retData.url){
+                        console.log(retData.url);
+                    }
+                    var url = "https://" + S3_BUCKET + 
+                        ".s3.amazonaws.com/" +
+                        key;
+                    subData = {
+                        gameUuid : data.gameUuid,
+                        playerUuid : data.playerUuid,
+                        submission : {
+                            content : url,
+                        },
+                    };
+                    console.log(subData);
+                    addSubmission(subData);
+                }
+            });
+        });
+
 
         socket.on("getFinishedGames", function(data){
             console.log("getFinishedGames");
@@ -332,8 +406,10 @@ module.exports = function(app, io)
                     }
                 }
                 if(i >= players.length){
-                    revealSessions[revealGameUuid].players.push({playerUuid : data.playerUuid, username : data.username});
-                    io.to(roomName).emit("playerJoinedRevealSession", {playerUuid : data.playerUuid, username: data.username});
+                    revealSessions[revealGameUuid].players.push(
+                            {playerUuid : data.playerUuid, username : data.username});
+                    io.to(roomName).emit("playerJoinedRevealSession", 
+                            {playerUuid : data.playerUuid, username: data.username});
                 }
                 console.log("emitting groupRevealInfo");
                 console.log(players);
@@ -384,36 +460,5 @@ module.exports = function(app, io)
             }
         });
 
-        socket.on("getS3SignedRequest", function(data){
-            console.log("getS3SignedRequest");
-            var uuid = nodeUuid.v1();
-            var fileName = data.fileName;
-            //get file extension
-            var extn = fileName.substring(fileName.lastIndexOf("."));
-            var key = uuid + extn;
-            var fileType = data.fileType;
-            const s3Params = {
-                Bucket: S3_BUCKET,
-                Key: key,
-                Expires: 60,
-                ContentType: fileType,
-                ACL: 'public-read'
-            };
-            s3.getSignedUrl('putObject', s3Params, (err, reqUrl) => {
-                if(err){
-                    console.log(err);
-                    socket.emit("serverFailure");
-                    return;
-                }
-                var url = "https://" + S3_BUCKET + 
-                    ".s3.amazonaws.com/" +
-                    key;
-                const returnData = {
-                    signedRequest: reqUrl,
-                    url: url,
-                };
-                socket.emit("signedRequest", returnData);
-            });
-        });
     });
 }

@@ -6,9 +6,17 @@ div(ng-controller="mainGamePageController")
     img(ng-show="showClueImg", ng-src="{{clueText}}")
     div(ng-show="showSubmitStuff")
         div(ng-show="showClueText && !isFirstSub")
-            input#fileInput(type="file")
-            button(ng-click="submitImgBtnClickedHandler()") Submit
-            include ./drawCanvas.jade 
+            label
+                input(type="radio", value="draw", ng-model="pictureOption")
+                | Draw Picture
+            label
+                input(type="radio", value="upload", ng-model="pictureOption")
+                | Upload Picture
+            #fileUpload(ng-show="pictureOption==='upload'")
+                input#fileInput(type="file")
+                button(ng-click="submitImgBtnClickedHandler()") Submit
+            #drawPicture(ng-show="pictureOption==='draw'")
+                include ./drawCanvas.jade 
         div(ng-show="showClueImg || isFirstSub")
             | Submission #[input(ng-model="submission")]
             button(ng-click="submitBtnClickedHandler()") Submit

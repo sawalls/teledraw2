@@ -7,3 +7,6 @@ div(ng-controller="drawCanvasController")
             rect(ng-attr-fill="{{selectedColor}}", x = 0, y = 0, width=40, height=30)
         
     canvas#drawCanvas(height="400", width="600")
+    br
+    button(ng-click="uploadCanvasImg()") Submit
+    button(ng-click="DRAWLOG()") DRAW LOG

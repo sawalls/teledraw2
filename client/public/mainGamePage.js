@@ -3,6 +3,7 @@ console.log("Loaded mainGamePage.js");
 app.controller("mainGamePageController", function($scope){
     console.log("In mainGamePageController");
     $scope.mailbox = [];
+    $scope.pictureOption = "draw";
 
     function updateClueText(){
         console.log("UPDATE CLUE TEXT");
@@ -69,9 +70,9 @@ app.controller("mainGamePageController", function($scope){
         };
         console.log(subData);
         $scope.submission = "";
-        var chain = $scope.mailbox.shift();
+//        var chain = $scope.mailbox.shift();
         socket.emit("submission", subData);
-        updateClueText();
+//        updateClueText();
     }
 
     $scope.submitBtnClickedHandler = function(){
@@ -146,14 +147,25 @@ app.controller("mainGamePageController", function($scope){
         });
     });
 
+    socket.on("submissionSuccessful", function(data){
+        console.log("submissionSuccessful");
+        $scope.$apply(function(){
+            var chain = $scope.mailbox.shift();
+            updateClueText();
+        });
+    });
+
+
     $scope.LOG = function(){
+        /*
         console.log("MAILBOX");
         console.log($scope.mailbox.length);
         for(var i = 0; i < $scope.mailbox.length; ++i){
             console.log($scope.mailbox[i].submission.content);
         }
-        console.log("showSubmitStuff");
-        console.log($scope.showSubmitStuff);
+        */
+        console.log($scope.gameUuid);
+        console.log($scope.playerUuid);
     }
 
 });
