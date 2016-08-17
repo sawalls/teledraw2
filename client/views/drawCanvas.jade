@@ -1,3 +1,9 @@
 script(src="drawCanvas.js")
 div(ng-controller="drawCanvasController")
+    #colorPicker
+        canvas#colorPalette(width=234, height=199, ng-click="paletteClickedHandler($event)")
+        p Selected Color:
+        svg(width="40", height="30", version="1.1", xmlns="http://www.w3.org/2000/svg")
+            rect(ng-attr-fill="{{selectedColor}}", x = 0, y = 0, width=40, height=30)
+        
     canvas#drawCanvas(height="400", width="600")
