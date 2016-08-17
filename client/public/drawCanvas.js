@@ -1,11 +1,12 @@
 console.log("LOADED drawCanvas.js");
-var drawCtx;
 var palette = new Image();
 palette.src = "colormap.gif";
 
 app.controller("drawCanvasController", function($scope){
     console.log("Loaded drawCanvasController");
-    drawCtx = document.getElementById("drawCanvas").getContext("2d");
+    var drawCanvas = document.getElementById("drawCanvas");
+    var drawCtx = drawCanvas.getContext("2d");
+
 
     drawCtx.fillStyle = "white";
     drawCtx.fillRect(0,0, drawCtx.canvas.width, drawCtx.canvas.height);
@@ -109,6 +110,22 @@ app.controller("drawCanvasController", function($scope){
         $scope.selectedColor = hexString;
         drawCtx.strokeStyle = hexString;
     };
+
+    $scope.uploadCanvasImg = function(){
+        console.log("uploadCanvasImg");
+        console.log(drawCanvas.toDataURL());
+        socket.emit("uploadCanvasImg", {
+            gameUuid : $scope.gameUuid,
+            playerUuid : $scope.playerUuid,
+            dataUrl : drawCanvas.toDataURL(),
+        });
+    }
+
+    $scope.DRAWLOG = function(){
+        console.log($scope.gameUuid);
+        console.log($scope.playerUuid);
+    }
+
 });
 
 
