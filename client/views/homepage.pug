@@ -1,21 +1,21 @@
 script(src="homepage.js")
 div(ng-controller="homepageController")
     div
-        include ./topNavBar.jade
+        include ./topNavBar.pug
     p Welcome {{username}}
     div(ng-show="showCurrentGames")
-        include ./currentGames.jade
+        include ./currentGames.pug
         button(ng-click="showCreateGameHandler()") Create Game
     div(ng-show="showJoinGame")
-        include ./joinGame.jade
+        include ./joinGame.pug
     div(ng-show="showCreateGame")
-        include ./createGame.jade
+        include ./createGame.pug
     div(ng-show="showGame")
-        include ./game.jade
+        include ./game.pug
     div(ng-show="showFinishedGames")
-        include ./finishedGames.jade
+        include ./finishedGames.pug
     div(ng-show="showReveal")
-        include ./reveal.jade
+        include ./reveal.pug
     div(ng-show="showGroupReveal")
-        include ./groupReveal.jade
+        include ./groupReveal.pug
 

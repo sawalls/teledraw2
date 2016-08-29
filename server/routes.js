@@ -14,7 +14,7 @@ const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 module.exports = function(app, io)
 {
     app.get("/", function(req, res){
-        res.render("teledraw.jade");
+        res.render("teledraw.pug");
     });
 
     io.sockets.on("connection", function(socket){
@@ -35,8 +35,6 @@ module.exports = function(app, io)
                     }
                 }
                 else{
-                    console.log("Login Successful");
-                    console.log(response);
                     socket.emit("loginSuccessful", {username : data.username, uuid : response.uuid});
                 }
             });
@@ -109,7 +107,6 @@ module.exports = function(app, io)
                         });
                     }
                 }
-                console.log(data);
                 socket.emit("openGameList", data);
                 }
             );
@@ -145,7 +142,6 @@ module.exports = function(app, io)
 
         socket.on("getCurrentGames", function(data){
             console.log("getCurrentGames");
-            console.log(data);
             gameCollection.findCurrentGames({
                 playerUuid : data.playerUuid,
                 }, function(rc, response){
