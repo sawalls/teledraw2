@@ -187,6 +187,7 @@ exports.findOpenGames = function(args, callback){
 exports.findCurrentGames = function(args, callback){
     console.log(args);
     Game.find({
+        "gameState" : {"$in" : [GAMESTATES.NOT_STARTED, GAMESTATES.IN_PROGRESS]},
         "players" : {"$elemMatch" :  {"uuid" : args.playerUuid}}
     },
     {gameName : 1, uuid : 1, creatorUsername : 1},
