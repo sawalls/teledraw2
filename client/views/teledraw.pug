@@ -12,8 +12,8 @@ html
     body.mainPage
         div(ng-app="teledraw", ng-controller="appController")
             div(ng-show="showLogin")
-                include ./login.jade
+                include ./login.pug
             div(ng-show="showCreateAcct")
-                include ./createAcct.jade
+                include ./createAcct.pug
             div(ng-show="showHomepage").grayBackground
-                include ./homepage.jade
+                include ./homepage.pug

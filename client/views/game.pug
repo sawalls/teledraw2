@@ -3,7 +3,7 @@ div(ng-controller="gameController")
     p You are in game {{gameName}}
     p(ng-show="showGameError") {{gameErrorMsg}}
     div(ng-show="showLobby")
-        include ./lobby.jade
+        include ./lobby.pug
     div(ng-show="showMainGamePage")
-        include ./mainGamePage.jade
+        include ./mainGamePage.pug
 

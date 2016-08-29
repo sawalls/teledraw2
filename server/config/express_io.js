@@ -27,7 +27,7 @@ module.exports = function(){
     app.use(sessionMiddleware);
 
     app.set("views", "./client/views");
-    app.set("view engine", "jade");
+    app.set("view engine", "pug");
 
     app.use(express.static("./client/public"));
 

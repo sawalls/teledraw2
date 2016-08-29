@@ -19,7 +19,7 @@
   "homepage": "https://github.com/sawalls/teledraw2#readme",
   "dependencies" : {
       "express" : "latest",
-      "jade" : "latest",
+      "pug" : "latest",
       "morgan" : "latest",
       "compression" : "latest",
       "express-session" : "latest",
