@@ -76,6 +76,11 @@ angular.module("teledraw").controller("homepageController", function($scope){
             gameName : data.gameName,
             gameUuid : data.gameUuid,
         });
+        //Move game to Current Games
+        $scope.$broadcast("gameJoined", {
+            gameName : data.gameName,
+            uuid : data.gameUuid,
+        });
     });
 
     $scope.$on("showCurrentGames", function(event, data){
