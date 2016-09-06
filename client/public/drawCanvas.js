@@ -121,6 +121,18 @@ app.controller("drawCanvasController", function($scope){
         });
     }
 
+    $scope.$on("clearGameData", function(event, data){
+        console.log("CLEARING CANVAS");
+        $scope.clearCanvas();
+    });
+
+    $scope.clearCanvas = function(){
+        paint = false;
+        clickX = [];
+        clickY = [];
+        clickDrag = [];
+    };
+
     $scope.DRAWLOG = function(){
         console.log($scope.gameUuid);
         console.log($scope.playerUuid);

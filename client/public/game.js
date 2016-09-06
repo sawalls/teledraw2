@@ -3,14 +3,18 @@ console.log("Loaded game.js");
 angular.module("teledraw").controller("gameController", function($scope){
     console.log("Loaded gameController");
 
-    function hideAll(){
+    function hideAndClearAll(){
         $scope.showGameError = 0;
         $scope.showLobby = 0;
         $scope.showMainGamePage = 0;
     };
 
+    $scope.$on("clearGameData", function(event, data){
+        hideAndClearAll();
+    });
+
     function navigateToMainGamePage(){
-        hideAll();
+        hideAndClearAll();
         $scope.showMainGamePage = 1;
     };
 
