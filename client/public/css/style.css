@@ -1,11 +1,23 @@
-
+html, body {
+    width : 100%;
+    height : 100%;
+}
 p {
     font-size : 1.5em;
 }
 h1 {
     font-size : 2.5em;
+    margin-top : 0px;
 }
-.heading{background-color :#CCFFC4;}
+
+.no-top-margin{
+    margin-top : 0px;
+    padding : 1px;
+}
+.heading{
+    background-color :#CCFFC4;
+    margin : 0px;
+}
 
 .navbar-nav > li{
     padding-left : 30px;
@@ -25,6 +37,10 @@ h1 {
 
 .nav-text {
     line-height : 210%;
+}
+
+.top-nav-link {
+    cursor : pointer;
 }
 
 .grayBackground{

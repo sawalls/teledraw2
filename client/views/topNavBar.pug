@@ -8,11 +8,11 @@ div(ng-controller="topNavBarController")
                 li
                     p.nav-text {{username}}
                 li
-                    button.navbar-btn(ng-click="currentGamesClickedHandler()") Current Games
+                    a.top-nav-link(ng-click="currentGamesClickedHandler()") Current Games
                 li
-                    button.navbar-btn(ng-click="createGameClickedHandler()") Create Game 
+                    a.top-nav-link(ng-click="createGameClickedHandler()") Create Game 
                 li
-                    button.navbar-btn(ng-click="gameLogClickedHandler()") Game Log
+                    a.top-nav-link(ng-click="gameLogClickedHandler()") Game Log
                 li
-                    button.navbar-btn(ng-click="logoutClickedHandler()") Logout
+                    a.top-nav-link(ng-click="logoutClickedHandler()") Logout
         
