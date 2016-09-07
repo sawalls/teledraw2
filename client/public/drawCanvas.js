@@ -122,7 +122,6 @@ app.controller("drawCanvasController", function($scope){
     }
 
     $scope.$on("clearGameData", function(event, data){
-        console.log("CLEARING CANVAS");
         $scope.clearCanvas();
     });
 

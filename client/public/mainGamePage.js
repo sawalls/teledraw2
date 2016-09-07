@@ -6,7 +6,6 @@ app.controller("mainGamePageController", function($scope){
     $scope.pictureOption = "draw";
 
     $scope.$on("clearGameData", function(event, data){
-        console.log("CLEARING GAME DATA");
         $scope.clueText = "";
         $scope.submission = "";
         $scope.showClueText = 0;

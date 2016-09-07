@@ -8,14 +8,13 @@ angular.module("teledraw").controller("homepageController", function($scope){
     $scope.showCreateGame = 0;
     $scope.showFinishedGames = 0;
 
-    function hideAll(){
+    function hideAllAndClear(){
         $scope.showCurrentGames = 0;
         $scope.showCreateGame = 0;
         $scope.showJoinGame = 0;
         $scope.showGame = 0;
         $scope.showFinishedGames = 0;
         $scope.showReveal = 0;
-        console.log("CLEARING GAME DATA - homepage");
         $scope.$broadcast("clearGameData");
     };
 
@@ -30,7 +29,7 @@ angular.module("teledraw").controller("homepageController", function($scope){
             gameName : data.gameName,
             gameUuid : data.gameUuid,
         };
-        hideAll();
+        hideAllAndClear();
         $scope.$broadcast("getGameInfo",
             gameData);
         $scope.showGame = 1;
@@ -45,7 +44,7 @@ angular.module("teledraw").controller("homepageController", function($scope){
 
 
     function navigateToReveal(data){
-        hideAll();
+        hideAllAndClear();
         $scope.$broadcast("getRevealInfo",data);
         $scope.showReveal = 1;
     };
@@ -59,7 +58,7 @@ angular.module("teledraw").controller("homepageController", function($scope){
     });
 
     function navigateToGroupReveal(data){
-        hideAll();
+        hideAllAndClear();
         $scope.$broadcast("getGroupRevealInfo", data);
         $scope.showGroupReveal = 1;
     };
@@ -86,21 +85,21 @@ angular.module("teledraw").controller("homepageController", function($scope){
     });
 
     $scope.$on("showCurrentGames", function(event, data){
-        hideAll();
+        hideAllAndClear();
         $scope.showCurrentGames = 1;
         $scope.showJoinGame = 1;
     });
     $scope.$on("showCreateGame", function(event, data){
-        hideAll();
+        hideAllAndClear();
         $scope.showCreateGame = 1;
     });
     $scope.$on("showGameLog", function(event, data){
-        hideAll();
+        hideAllAndClear();
         $scope.showFinishedGames = 1;
     });
 
     $scope.showCreateGameHandler = function(){
-        hideAll();
+        hideAllAndClear();
         $scope.showCreateGame = 1;
     }
 });
