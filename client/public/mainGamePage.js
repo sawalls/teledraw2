@@ -5,6 +5,15 @@ app.controller("mainGamePageController", function($scope){
     $scope.mailbox = [];
     $scope.pictureOption = "draw";
 
+    $scope.$on("clearGameData", function(event, data){
+        $scope.clueText = "";
+        $scope.submission = "";
+        $scope.showClueText = 0;
+        $scope.showClueImg = 0;
+        $scope.showSubmitStuff = 0;
+        $scope.isFirstSub = 0;
+    });
+
     function updateClueText(){
         console.log("UPDATE CLUE TEXT");
         
@@ -70,9 +79,7 @@ app.controller("mainGamePageController", function($scope){
         };
         console.log(subData);
         $scope.submission = "";
-//        var chain = $scope.mailbox.shift();
         socket.emit("submission", subData);
-//        updateClueText();
     }
 
     $scope.submitBtnClickedHandler = function(){

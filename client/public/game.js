@@ -9,6 +9,10 @@ angular.module("teledraw").controller("gameController", function($scope){
         $scope.showMainGamePage = 0;
     };
 
+    $scope.$on("clearGameData", function(event, data){
+        hideAll();
+    });
+
     function navigateToMainGamePage(){
         hideAll();
         $scope.showMainGamePage = 1;

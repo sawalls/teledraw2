@@ -23,5 +23,9 @@ angular.module("teledraw").controller("currentGamesController", function($scope)
             $scope.gameList = data.gameList;
         });
     });
+
+    $scope.$on("gameJoined", function(event, data){
+        $scope.gameList.push(data);
+    });
 });
 

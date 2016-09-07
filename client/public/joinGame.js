@@ -67,6 +67,14 @@ app.controller("joinGameController", function($scope){
             $scope.gameList.push(data);
         });
     });
+    
+    $scope.$on("gameJoined", function(event, data){
+        for(var i = 0; i < $scope.gameList.length; ++i){
+            if($scope.gameList[i].uuid === data.uuid){
+                $scope.gameList.splice(i, 1);
+            }
+        }
+    });
 });
 
 
