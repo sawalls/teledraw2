@@ -1,6 +1,6 @@
 console.log("LOADED drawCanvas.js");
 var palette = new Image();
-palette.src = "colormap.gif";
+palette.src = "colorMap.png";
 
 app.controller("drawCanvasController", function($scope){
     console.log("Loaded drawCanvasController");
@@ -130,6 +130,7 @@ app.controller("drawCanvasController", function($scope){
         clickX = [];
         clickY = [];
         clickDrag = [];
+        redraw();
     };
 
     $scope.DRAWLOG = function(){
