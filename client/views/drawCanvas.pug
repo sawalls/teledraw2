@@ -8,5 +8,7 @@ div(ng-controller="drawCanvasController")
         
     canvas#drawCanvas(height="400", width="600")
     br
+    button(ng-click="clearCanvas()") Clear
+    br
     button(ng-click="uploadCanvasImg()") Submit
     button(ng-click="DRAWLOG()") DRAW LOG
