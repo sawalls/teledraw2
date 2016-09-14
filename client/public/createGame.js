@@ -8,7 +8,6 @@ app.controller("createGameController", function($scope){
             return;
         }
         console.log($scope.gameName);
-        console.log($scope.password);
         console.log($scope.playerUuid);
         socket.emit("createGame",
             {
