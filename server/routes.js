@@ -22,7 +22,6 @@ module.exports = function(app, io)
 
         socket.on("login", function(data){
             console.log("Login attempted");
-            console.log(data);
             userCollection.loginUser(data, function(rc, response){
                 if(rc){
                     if(rc < -1){
