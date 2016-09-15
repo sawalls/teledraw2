@@ -157,6 +157,7 @@ app.controller("mainGamePageController", function($scope){
         console.log("submissionSuccessful");
         $scope.$apply(function(){
             var chain = $scope.mailbox.shift();
+            $scope.$broadcast("clearCanvas");
             updateClueText();
         });
     });

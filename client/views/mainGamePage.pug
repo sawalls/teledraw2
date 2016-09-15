@@ -3,9 +3,9 @@ div(ng-controller="mainGamePageController")
     p(ng-show="isFirstSub") Choose a word or phrase!
     p(ng-show="mailbox.length == 0 && playerState === 1") Please wait for your next clue!
     p(ng-show="playerState === 2") All Done!
-    p(ng-show="showClueText") {{clueText}}
-    img(ng-show="showClueImg", ng-src="{{clueText}}")
     div(ng-show="showSubmitStuff")
+        p(ng-show="showClueText") {{clueText}}
+        img(ng-show="showClueImg", ng-src="{{clueText}}")
         div(ng-show="showClueText && !isFirstSub")
             label
                 input(type="radio", value="draw", ng-model="pictureOption")
