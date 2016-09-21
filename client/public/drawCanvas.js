@@ -113,10 +113,12 @@ app.controller("drawCanvasController", function($scope){
 
     $scope.uploadCanvasImg = function(){
         console.log("uploadCanvasImg");
+        $scope.disableSubmit = true;
         console.log(drawCanvas.toDataURL());
         socket.emit("uploadCanvasImg", {
             gameUuid : $scope.gameUuid,
             playerUuid : $scope.playerUuid,
+            chainOwnerUuid : $scope.mailbox[0].chainOwnerUuid,
             dataUrl : drawCanvas.toDataURL(),
         });
     }

@@ -14,11 +14,13 @@ div(ng-controller="mainGamePageController")
                 | Upload Picture
             #fileUpload(ng-show="pictureOption==='upload'")
                 input#fileInput(type="file")
-                button(ng-click="submitImgBtnClickedHandler()") Submit
+                button(ng-click="submitImgBtnClickedHandler()",
+                    ng-disabled="disableSubmit") Submit
             #drawPicture(ng-show="pictureOption==='draw'")
                 include ./drawCanvas.pug 
         div(ng-show="showClueImg || isFirstSub")
             | Submission #[input(ng-model="submission")]
-            button(ng-click="submitBtnClickedHandler()") Submit
+            button(ng-click="submitBtnClickedHandler()",
+                    ng-disabled="disableSubmit") Submit
     button(ng-click="LOG()") LOG
 
