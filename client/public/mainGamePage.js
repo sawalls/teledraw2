@@ -163,7 +163,7 @@ app.controller("mainGamePageController", function($scope){
         $scope.disableSubmit = false;
         $scope.$apply(function(){
             var chain = $scope.mailbox.shift();
-            $scope.$broadcast("clearCanvas");
+            $scope.$broadcast("submissionSuccessful");
             updateClueText();
         });
     });

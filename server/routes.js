@@ -318,6 +318,7 @@ module.exports = function(app, io)
                     subData = {
                         gameUuid : data.gameUuid,
                         playerUuid : data.playerUuid,
+                        chainOwnerUuid : data.chainOwnerUuid,
                         submission : {
                             content : url,
                         },

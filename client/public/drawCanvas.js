@@ -113,7 +113,7 @@ app.controller("drawCanvasController", function($scope){
 
     $scope.uploadCanvasImg = function(){
         console.log("uploadCanvasImg");
-        $scope.disableSubmit = true;
+        $scope.disableCanvasSubmit = true;
         console.log(drawCanvas.toDataURL());
         socket.emit("uploadCanvasImg", {
             gameUuid : $scope.gameUuid,
@@ -127,7 +127,8 @@ app.controller("drawCanvasController", function($scope){
         $scope.clearCanvas();
     });
 
-    $scope.$on("clearCanvas", function(event, data){
+    $scope.$on("submissionSuccessful", function(event, data){
+        $scope.disableCanvasSubmit = false;
         $scope.clearCanvas();
     });
 
