@@ -127,6 +127,10 @@ app.controller("drawCanvasController", function($scope){
         $scope.clearCanvas();
     });
 
+    $scope.$on("clearCanvas", function(event, data){
+        $scope.clearCanvas();
+    });
+
     $scope.clearCanvas = function(){
         paint = false;
         clickX = [];

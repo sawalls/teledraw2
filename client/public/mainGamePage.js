@@ -19,8 +19,7 @@ app.controller("mainGamePageController", function($scope){
         console.log("UPDATE CLUE TEXT");
         
         if($scope.playerState === 2){
-            $scope.clueText = "All done!";
-            $scope.showClueText = 1;
+            $scope.showClueText = 0;
             $scope.showClueImg = 0;
             $scope.showSubmitStuff = 0;
             $scope.isFirstSub = 0;
@@ -164,21 +163,18 @@ app.controller("mainGamePageController", function($scope){
         $scope.disableSubmit = false;
         $scope.$apply(function(){
             var chain = $scope.mailbox.shift();
+            $scope.$broadcast("clearCanvas");
             updateClueText();
         });
     });
 
 
     $scope.LOG = function(){
-        /*
         console.log("MAILBOX");
         console.log($scope.mailbox.length);
         for(var i = 0; i < $scope.mailbox.length; ++i){
             console.log($scope.mailbox[i].submission.content);
         }
-        */
-        console.log($scope.gameUuid);
-        console.log($scope.playerUuid);
     }
 
 });
