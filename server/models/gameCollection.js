@@ -311,7 +311,7 @@ exports.addSubmission = function(args, callback){
                             playerState = PLAYER_STATES.COMPLETED;
                         }
 
-                        function updateChain(updatedPlayerState){
+                        function updateChain(updatedPlayerState, updatedGameState){
                             //Add chain to the next player's mailbox
                             Game.update({uuid : gameUuid,
                                 "players.uuid" : nextPlayerUuid},
@@ -329,6 +329,11 @@ exports.addSubmission = function(args, callback){
                                             targetPlayerUuid : nextPlayerUuid,
                                             updatedPlayerState : 
                                                 updatedPlayerState ? updatedPlayerState : undefined,
+                                            updatedGameState : 
+                                                updatedGameState ? updatedGameState : undefined,
+                                            gameUuid : gameUuid,
+                                            creatorUsername : game.creatorUsername,
+                                            gameName : game.gameName,
                                             submission : {
                                                 content : submission.content,
                                                 authorUuid : playerUuid,
@@ -341,20 +346,26 @@ exports.addSubmission = function(args, callback){
 
                         if(player.state != playerState){
                             var updateObj = {"$set" : {"players.$.state" : playerState}};
+                            var updatedGameState = undefined;
                             if(playerState === PLAYER_STATES.COMPLETED
                                     && numCompletedChains === (players.length - 1)){
                                 //The final chain was completed
+                                updatedGameState = GAMESTATES.COMPLETED;
                                 updateObj = {"$set" : {"players.$.state" : playerState, 
-                                    "gameState" : GAMESTATES.COMPLETED}}
+                                    "gameState" : updatedGameState}}
+
                             }
-                            console.log("Updating gamestate");
+                            console.log("Updating player state in game");
+                            if(updatedGameState){
+                                console.log("Updating game state");
+                            }
                             Game.update(
                                 {"uuid" : gameUuid, "players.uuid" : player.uuid},
                                 updateObj,
                                 dbCallbackGenerator(callback,
                                 function(response){
                                     console.log(response);
-                                    updateChain(playerState);
+                                    updateChain(playerState, updatedGameState);
                                 })
                             );
                         }
