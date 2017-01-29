@@ -8,6 +8,7 @@ div(ng-controller="currentGamesController")
                 th Game Name
                 th Creator
             tr(ng-repeat="game in gameList", ng-click="rowClickedHandler(game)")
-                td {{game.gameName}}
+                td
+                    .linkLike {{game.gameName}}
                 td {{game.creatorUsername}}
 

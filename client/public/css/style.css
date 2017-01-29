@@ -46,3 +46,13 @@ h1 {
 .grayBackground{
     background-color : #F4F6F6;
 }
+
+/* Forgive me, Molly, for I have sinned ~swalls */
+.linkLike {
+    cursor: pointer;
+    color: blue;
+}
+
+.linkLike:hover {
+    text-decoration: underline;
+}
