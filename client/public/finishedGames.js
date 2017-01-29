@@ -29,5 +29,13 @@ angular.module("teledraw").controller("finishedGamesController", function($scope
             $scope.gameList = data.gameList;
         });
     });
+
+    socket.on("gameFinished", function(data){
+        console.log("gameFinished");
+        console.log(data);
+        $scope.$apply(function(){
+            $scope.gameList.push(data);
+        });
+    });
 });
 

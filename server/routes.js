@@ -247,6 +247,13 @@ module.exports = function(app, io)
                         if(response.updatedPlayerState){
                             socket.emit("updatedPlayerState", {playerState: response.updatedPlayerState});
                         }
+                        if(response.updatedGameState){
+                            //Refresh list of finished games
+                            io.to(data.gameUuid).emit("gameFinished", 
+                                {uuid : response.gameUuid,
+                                 creatorUsername : response.creatorUsername,
+                                 gameName : response.gameName});
+                        }
                     }
                 }
             );
