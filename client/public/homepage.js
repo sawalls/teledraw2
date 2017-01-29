@@ -15,6 +15,7 @@ angular.module("teledraw").controller("homepageController", function($scope){
         $scope.showGame = 0;
         $scope.showFinishedGames = 0;
         $scope.showReveal = 0;
+        $scope.showGroupReveal = 0;
         $scope.$broadcast("clearGameData");
     };
 
