@@ -10,5 +10,5 @@ div(ng-controller="drawCanvasController")
     br
     button(ng-click="clearCanvas()") Clear
     br
-    button(ng-click="uploadCanvasImg()") Submit
+    button(ng-click="uploadCanvasImg()", ng-disabled="disableCanvasSubmit") Submit
     button(ng-click="DRAWLOG()") DRAW LOG

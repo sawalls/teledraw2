@@ -4,6 +4,7 @@ app.controller("mainGamePageController", function($scope){
     console.log("In mainGamePageController");
     $scope.mailbox = [];
     $scope.pictureOption = "draw";
+    $scope.disableSubmit = false;
 
     $scope.$on("clearGameData", function(event, data){
         $scope.clueText = "";
@@ -72,6 +73,7 @@ app.controller("mainGamePageController", function($scope){
         var subData = {
             gameUuid : $scope.gameUuid,
             playerUuid : $scope.playerUuid,
+            chainOwnerUuid : $scope.mailbox[0].chainOwnerUuid,
             submission : {
                 content : submission
             },
@@ -85,16 +87,19 @@ app.controller("mainGamePageController", function($scope){
         if($scope.submission === ""){
             return;
         }
+        $scope.disableSubmit = true;
         submitToDB($scope.submission);
     };
 
     $scope.submitImgBtnClickedHandler = function(){
         console.log("submitImgBtnClickedHandler");
+        $scope.disableSubmit = true;
         var files = document.getElementById("fileInput").files;
         var file = files[0];
         console.log(file.name);
         if(!file){
             alert("No file selected");
+            $scope.disableSubmit = false;
             return;
         }
         socket.emit("getS3SignedRequest", {
@@ -155,9 +160,10 @@ app.controller("mainGamePageController", function($scope){
 
     socket.on("submissionSuccessful", function(data){
         console.log("submissionSuccessful");
+        $scope.disableSubmit = false;
         $scope.$apply(function(){
             var chain = $scope.mailbox.shift();
-            $scope.$broadcast("clearCanvas");
+            $scope.$broadcast("submissionSuccessful");
             updateClueText();
         });
     });

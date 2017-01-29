@@ -291,6 +291,8 @@ module.exports = function(app, io)
         });
 
         socket.on("uploadCanvasImg", function(data){
+            console.log("UPLOAD CANVAS DATA");
+            console.log(data);
             var uuid = nodeUuid.v1();
             var key = uuid + ".png";
             buf = new Buffer(data.dataUrl.replace(/^data:image\/\w+;base64,/, ""),'base64')
@@ -316,6 +318,7 @@ module.exports = function(app, io)
                     subData = {
                         gameUuid : data.gameUuid,
                         playerUuid : data.playerUuid,
+                        chainOwnerUuid : data.chainOwnerUuid,
                         submission : {
                             content : url,
                         },

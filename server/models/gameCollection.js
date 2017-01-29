@@ -249,6 +249,7 @@ exports.addSubmission = function(args, callback){
     var gameUuid = args.gameUuid;
     var playerUuid = args.playerUuid;
     var submission = args.submission;
+    var chainOwnerUuid = args.chainOwnerUuid;
 
     //Find the game
     Game.find({uuid : gameUuid},
@@ -288,6 +289,11 @@ exports.addSubmission = function(args, callback){
                     callback(-2, msg);
                 }
                 var chain = mailbox.shift();
+                //Check that the user is actually trying to submit to this chain
+                if(chain.ownerUuid != chainOwnerUuid){
+                    console.error("Tried to submit to a chain not at front of mailbox!");
+                    return;
+                }
 
                 //Remove that chain from the player's mailbox
                 Game.update({uuid : gameUuid,
