@@ -5,7 +5,9 @@ angular.module("teledraw").controller("createAcctController", function($scope){
     $scope.createAcctBtnClickedHandler = function(){
         console.log("Button clicked");
         if(!$scope.createAcctUsername 
-                || !$scope.createAcctPassword){
+                || !$scope.createAcctPassword
+                || !$scope.createAcctEmail){
+            alert("Please fill completely");
             return;
         }
         console.log($scope.createAcctUsername);
