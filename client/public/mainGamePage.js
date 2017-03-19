@@ -37,7 +37,7 @@ app.controller("mainGamePageController", function($scope){
                 //Check if it's a picture
                 var text = $scope.mailbox[0].submission.content;
                 $scope.clueText = text;
-                var imgRegex = new RegExp("\.png$|\.jpg$|\.gif$|\.bmp", "g");
+                var imgRegex = new RegExp("\.png$|\.jpg$|\.gif$|\.bmp$|\.jpeg$|\.svg$", "g");
                 if(text.search(imgRegex) !== -1){
                     //It's a picture
                     $scope.showClueImg = 1;
