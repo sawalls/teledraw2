@@ -41,7 +41,6 @@ module.exports = function(app, io)
 
         socket.on("createAcct", function(data){
             console.log("Create Acct attempted");
-            console.log(data);
             userCollection.addUser(data, function(rc, response){
                 if(rc){
                     if(rc < 0){
