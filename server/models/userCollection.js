@@ -56,12 +56,12 @@ exports.addUser = function(args, callback)
             else{
                 if(users[0].usernameLower === username.toLowerCase()){
                     console.error("Tried to create acct with existing username");
-                    callback(1);
+                    callback(1, {error: "Tried to create account with existing username"});
                     return;
                 }
                 else{
                     console.error("Tried to create acct with existing email");
-                    callback(2);
+                    callback(2, {error : "Tried to create acct with existing email"});
                     return;
                 }
             }
